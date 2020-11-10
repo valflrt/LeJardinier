@@ -35,39 +35,54 @@ module.exports = class Message {
 	};
 };
 
-class lastMessage {
+
+class testMessage {
 	constructor() {
 		this.content = [">>> "];
-		this.currentLine = new Array();
+		this.current = new Array();
 	};
 
 	resetCurrentLine() {
-		this.currentLine = new Array();
+		this.current = new Array();
 	};
 
-	addLine(str) {
-		this.content.push(str);
+	// line
+
+	startLine() {
+		this.current.push();
 		return this;
 	};
 
-	add(str) {
-		this.currentLine.push(str);
-		return this;
-	};
-
-	break() {
+	endLine() {
 		this.content.push(this.currentLine.join(" "));
 		this.resetCurrentLine();
 		return this;
 	};
 
-	addCodeBlock(str) {
-		this.content.push("\`\`\`" + str + "\`\`\`");
+	// code block
+
+	startCodeBlock() {
+		this.current.push("\`\`\`");
 		return this;
 	};
 
+	endCodeBlock() {
+		this.content;
+		return this;
+	};
+
+	// methods
+
+	append(str) {
+		this.current.push(str);
+		return this;
+	};
+
+	break() {
+		this.current.push("\n");
+	};
+
 	render() {
-		let content = this.content.join("\n").replace(/\n/, "");
-		return content;
+		return (this.content.join("\n").replace(/\n/, ""));
 	};
 };

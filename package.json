@@ -1,0 +1,22 @@
+{
+  "name": "le-jardinier-bot",
+  "description": "A simple discord bot.",
+  "main": "bot.js",
+  "dependencies": {
+    "discord.js": "^12.4.1",
+    "node-fetch": "^2.6.1"
+  },
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valflrt/LeJardinier.git"
+  },
+  "author": "valflrt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valflrt/LeJardinier/issues"
+  },
+  "homepage": "https://github.com/valflrt/LeJardinier#readme"
+}
