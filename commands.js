@@ -1,5 +1,4 @@
 const Command = require("./command");
-const Message = require("./message");
 const { Random, RandomWord } = require("./toolbox");
 const setPresence = require("./presence");
 const fetch = require("node-fetch");
@@ -10,12 +9,15 @@ let commands = new Array();
 
 commands.push(new Command("ping", "Commande de test.", (message, args, bot) => {
 
-	message.channel.send(
-		new Message()
-			.add("pong :ping_pong: !")
-			.blockEnd()
-			.render()
-	);
+	message.channel.send(`>>> Pong :ping_pong: !`);
+
+}));
+
+/*-----------------------------------*/
+
+commands.push(new Command("", "Faire dire ok au bot.", (message, args, bot) => {
+
+	message.channel.send(`>>> ok`);
 
 }));
 
@@ -23,13 +25,7 @@ commands.push(new Command("ping", "Commande de test.", (message, args, bot) => {
 
 commands.push(new Command("hey", "[] - Dire bonjour au bot.", (message, args, bot) => {
 
-	message.channel.send(
-		new Message()
-			.add(`${RandomWord(["Salut", "Coucou", "Bonjour"])} ${message.author.username} !`)
-			.add(`${RandomWord([":grin:", ":partying_face:", ":thumbsup:"])}`)
-			.blockEnd()
-			.render()
-	);
+	message.channel.send(`>>> ${RandomWord(["Salut", "Coucou", "Hey"])} ${message.author.username} ! ${RandomWord([":grin:", ":partying_face:", ":thumbsup:"])}`);
 
 }));
 
@@ -37,12 +33,7 @@ commands.push(new Command("hey", "[] - Dire bonjour au bot.", (message, args, bo
 
 commands.push(new Command("repetes", "[texte] - Faire répèter quelque chose au bot.", (message, args, bot) => {
 
-	message.channel.send(
-		new Message()
-			.add(args.join(" "))
-			.blockEnd()
-			.render()
-	);
+	message.channel.send(">>> " + args.join(" "));
 
 }));
 
@@ -50,12 +41,7 @@ commands.push(new Command("repetes", "[texte] - Faire répèter quelque chose au
 
 commands.push(new Command("joues", "[texte] - Faire jouer le bot à quelque chose.", (message, args, bot) => {
 
-	message.channel.send(
-		new Message()
-			.add(`Comme tu veux ${RandomWord([":ok_hand:", ":thumbsup:"])}`)
-			.blockEnd()
-			.render()
-	);
+	message.channel.send(`>>> Comme tu veux ${RandomWord([":ok_hand:", ":thumbsup:"])}`);
 
 	setPresence(bot, args.join(" "));
 
@@ -69,16 +55,7 @@ commands.push(new Command("joues", "[texte] - Faire jouer le bot à quelque chos
 
 commands.push(new Command("moi", "[] - Faire répèter quelque chose au bot.", (message, args, bot) => {
 
-	message.channel.send(
-		new Message()
-			.add(`Voici quelques informations à propos de ${message.author.username}`)
-			.add(`${[":yum:", ":partying_face:", ":thumbsup:"][toolbox.Random(0, 2)]}`)
-			.blockEnd()
-			.add(`Nom d'utilisateur: ${message.author.username}`).break()
-			.add(`Numéro d'identification: ${message.author.id}`)
-			.blockEnd()
-			.render()
-	);
+	message.channel.send(`>>> Voici quelques informations à propos de ${message.author.username} ${RandomWord([":yum:", ":partying_face:", ":thumbsup:"])}\n\`\`\`Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}`);
 
 }));
 
@@ -91,25 +68,11 @@ commands.push(new Command("meteo", "[ville] - Le bot donne la météo pour la vi
 	fetch(url)
 		.then(response => response.json())
 		.then(response => {
-			message.channel.send(
-				new Message()
-					.add(`Voici la météo dans la ville de ${render.bold(args.join(" "))} :partying_face:`)
-					.blockEnd()
-					.add(`Description: ${response.weather[0].description}`).break()
-					.add(`Température: ${response.main.temp}°C`).break()
-					.add(`Température ressentie: ${response.main.feels_like}°C`).break()
-					.add(`Humidité: ${response.main.humidity}%`)
-					.codeBlockEnd()
-					.render()
-			);
+			message.channel.send(`Voici la météo dans la ville de **${args.join(" ")}** : partying_face:\n\`\`\`Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\`\`\``);
 		})
 		.catch((err) => {
 			console.log(err);
-			message.channel.send(
-				new Message()
-					.add(`Oups je ne peux pas trouver la météo pour cette ville... :confounded:`)
-					.render()
-			);
+			message.channel.send(`Oups je ne peux pas trouver la météo pour cette ville... :confounded:`);
 		});
 
 }));

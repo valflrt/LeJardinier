@@ -44,6 +44,10 @@ bot.on("message", (message) => {
 		};
 	});
 
+	if (message.include("ok") === true) {
+		message.channel.send("Grrrr");
+	};
+
 });
 
 bot.login(settings.token);
