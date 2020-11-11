@@ -1,18 +1,24 @@
 const discord = require("discord.js");
 const { Client } = discord;
 const commands = require("./commands");
-const setPresence = require("./presence");
 const settings = require("./settings.json");
+require("colors");
 
 const bot = new Client();
 
 bot.on("ready", () => {
 	bot.user.setUsername(settings.username);
-	console.log(`connected\nlogged in as: ${bot.user.tag} - (${bot.user.id})\n`);
-	setPresence(bot, "son jardin");
+	bot.user.setPresence(settings.activity);
+
+	console.log("\033c");
+	console.log(`${"connected".bgGreen.black}\n\nlogged in as: ${(bot.user.tag).cyan} - (${(bot.user.id).cyan})\n`);
 });
 
 bot.on("message", (message) => {
+
+	message.channel.stopTyping();
+
+	console.log(`${message.author.tag}: ${message.content}`);
 
 	if (message.author.bot) return;
 
@@ -36,17 +42,32 @@ bot.on("message", (message) => {
 		arguments: args
 	};
 
-	console.log(`${message.author.tag}: ${message.content}`);
-
-	commands.forEach((command) => {
-		if (command.command === cmd) {
-			command.execute(message, args, bot);
+	commands.forEach(async (command) => {
+		if (command.command !== "text" && command.command === cmd) {
+			message.channel.startTyping();
+			await command.execute(message, args, bot);
+			message.channel.stopTyping();
 		};
 	});
 
-	if (message.include("ok") === true) {
-		message.channel.send("Grrrr");
-	};
+	message.content.split(" ").forEach(word => {
+		if (word == "ok" || word == "Ok" || word == "oK" || word == "OK") {
+			message.react("💢")
+				.then(message.react("💥"))
+				.then(message.react("🤬"))
+				.then(message.react("💣"))
+				.then(message.react("☠"))
+				.then(message.react("🤡"))
+				.then(message.react("🔪"))
+				.then(message.channel.send("Grrrr"));
+		};
+	});
+
+	message.mentions.members.each(member => {
+		if (member.user.id === bot.user.id) {
+			message.channel.send("grrr :skull:");
+		};
+	});
 
 });
 
