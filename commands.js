@@ -130,7 +130,7 @@ commands.push(new Command("taux", "Taux aléatoire de <argument>.", (message, ar
 /*-----------------------------------*/
 
 commands.push(new Command("vraioufaux", "Vrai ou faux <argument>.", (message, args, bot) => {
-	message.channel.send(`>>> **${message.author.username}**: ${args.join(" ") || "quelque chose"}\n${RandomItem(["Vrai", "Faux"])} !`);
+	message.channel.send(`>>> **${message.author.username}**: ${args.join(" ") || "quelque chose"}\n**${bot.user.username}**: ${RandomItem(["Vrai", "Faux"])} !`);
 }));
 
 module.exports = commands;
