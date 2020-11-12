@@ -20,7 +20,10 @@ bot.on("message", (message) => {
 
 	console.log(`${message.author.tag}: ${message.content}`);
 
-	if (message.author.bot) return;
+	if (message.channel.type === "dm") {
+		message.channel.send("Désolé je ne fonctionne que dans les salon de serveurs :confounded:");
+		return;
+	};
 
 	const msg = (message.content.charAt(0) === "!") ? message.content.substr(1, message.content.length) : null;
 
@@ -52,20 +55,8 @@ bot.on("message", (message) => {
 
 	message.content.split(" ").forEach(word => {
 		if (word == "ok" || word == "Ok" || word == "oK" || word == "OK") {
-			message.react("💢")
-				.then(message.react("💥"))
-				.then(message.react("🤬"))
-				.then(message.react("💣"))
-				.then(message.react("☠"))
-				.then(message.react("🤡"))
-				.then(message.react("🔪"))
-				.then(message.channel.send("Grrrr"));
-		};
-	});
-
-	message.mentions.members.each(member => {
-		if (member.user.id === bot.user.id) {
-			message.channel.send("grrr :skull:");
+			message.channel.send("Grrrr")
+				.then(message.react("🤬"));
 		};
 	});
 

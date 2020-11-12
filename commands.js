@@ -3,6 +3,7 @@ const { Random, RandomItem } = require("./toolbox");
 const fetch = require("node-fetch");
 const settings = require("./settings.json");
 const discord = require("discord.js");
+const fs = require("fs");
 
 let commands = new Array();
 
@@ -128,8 +129,8 @@ commands.push(new Command("taux", "Taux aléatoire de <argument>.", (message, ar
 
 /*-----------------------------------*/
 
-commands.push(new Command("planter", "Faire une plantation dans le jardin du jardinier.", (message, args, bot) => {
-
+commands.push(new Command("vraioufaux", "Vrai ou faux <argument>.", (message, args, bot) => {
+	message.channel.send(`>>> **${message.author.username}**: ${args.join(" ") || "quelque chose"}\n${RandomItem(["Vrai", "Faux"])} !`);
 }));
 
 module.exports = commands;
