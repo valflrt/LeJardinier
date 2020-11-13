@@ -4,6 +4,7 @@ const commands = require("./commands");
 const settings = require("./settings.json");
 const { RandomItem } = require("./utils/toolbox");
 require("colors");
+const { db } = require("./utils/database");
 
 const bot = new Client();
 
@@ -14,11 +15,11 @@ bot.on("ready", () => {
 		await bot.user.setUsername(settings.username);
 		console.log(` ${"[+]".green} Username setted`);
 		await bot.user.setPresence(settings.activity);
-		console.log(` ${"[+]".green} Presence setted`);
+		console.log(` ${"[+]".green} Presence set`);
+		console.log(` ${"[+]".green} Database ready`);
 
 		console.log(` ${"[+]".green} Logged in as: ${(bot.user.tag).cyan} - (${(bot.user.id).cyan})\n`);
 		console.log(" " + " connected ".bgGreen.black + "\n");
-		console.log(" message log:\n");
 	})();
 
 });
