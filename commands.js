@@ -1,15 +1,15 @@
-const Command = require("./command");
-const { Random, RandomItem } = require("./toolbox");
+const Command = require("./utils/command");
+const { Random, RandomItem } = require("./utils/toolbox");
 const fetch = require("node-fetch");
 const settings = require("./settings.json");
-const discord = require("discord.js");
-const fs = require("fs");
+const { db, addServer, addMember, updateMoney } = require("./utils/database");
+const datas = require("./db.json");
 
 let commands = new Array();
 
 /*-----------------------------------*/
 
-commands.push(new Command("text", "\n- Commandes d'aide -\n"));
+commands.push(new Command("text", "\n- Commandes d'aide -\n")); // command name "text" make the command as a text part for displaying in the help command
 
 /*-----------------------------------*/
 
@@ -56,13 +56,13 @@ commands.push(new Command("hey", "Dire bonjour au bot.", (message, args, bot) =>
 
 /*-----------------------------------*/
 
-commands.push(new Command("repetes", "Faire répèter <argument> au bot.", (message, args, bot) => {
+commands.push(new Command("repete", "Faire répèter <argument> au bot.", (message, args, bot) => {
 	message.channel.send(">>> " + args.join(" "));
 }));
 
 /*-----------------------------------*/
 
-commands.push(new Command("joues", "Faire jouer le bot à <argument>.", (message, args, bot) => {
+commands.push(new Command("joue", "Faire jouer le bot à <argument>.", (message, args, bot) => {
 	message.channel.send(`>>> Comme tu veux ${RandomItem([":ok_hand:", ":thumbsup:"])}`);
 	bot.user.setPresence({ activity: { name: args.join(" ") } });
 	setTimeout(() => {
@@ -77,7 +77,7 @@ commands.push(new Command("text", "\n- Commandes d'information -\n"));
 /*-----------------------------------*/
 
 commands.push(new Command("moi", "Obtenir des informations sur vous.", (message, args, bot) => {
-	message.channel.send(`>>> Voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}\n\`\`\`Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\`\`\``);
+	message.channel.send(`>>> Voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}\n\`\`\`Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${message}\`\`\``);
 }));
 
 /*-----------------------------------*/
@@ -132,5 +132,38 @@ commands.push(new Command("taux", "Taux aléatoire de <argument>.", (message, ar
 commands.push(new Command("vraioufaux", "Vrai ou faux <argument>.", (message, args, bot) => {
 	message.channel.send(`>>> **${message.author.username}**: ${args.join(" ") || "quelque chose"}\n**${bot.user.username}**: ${RandomItem(["Vrai", "Faux"])} !`);
 }));
+
+/*-----------------------------------*/
+
+commands.push(new Command("recolter", "Récolter les graines du jardin.", (message, args, bot) => {
+
+	if (!datas.servers.find(server => server.id === message.guild.id)) {
+		addServer(message.guild.id);
+	} else {
+		var server = datas.servers.find(server => server.id === message.guild.id);
+	};
+
+	if (!server.users.find(user => user.id === message.author.id)) {
+		addMember(message.guild.id, message.author.id);
+	} else {
+		var user = server.users.find(user => user.id === message.author.id);
+	};
+
+	if (user) {
+
+	};
+
+	let seedAmount = Random(2, 6);
+
+	updateMoney(message.guild.id, message.author.id, seedAmount);
+
+	message.channel.send(`>>> Bravo **${message.author.username}**, tu as récolté **${seedAmount} graines** ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])} !`);
+}));
+
+/*-----------------------------------*/
+
+commands.push(new Command("text", "\n- Commandes d'administration -\n"));
+
+/*-----------------------------------*/
 
 module.exports = commands;

@@ -2,6 +2,7 @@ const discord = require("discord.js");
 const { Client } = discord;
 const commands = require("./commands");
 const settings = require("./settings.json");
+const { RandomItem } = require("./utils/toolbox");
 require("colors");
 
 const bot = new Client();
@@ -25,7 +26,7 @@ bot.on("message", (message) => {
 		return;
 	};
 
-	const msg = (message.content.charAt(0) === "!") ? message.content.substr(1, message.content.length) : null;
+	const msg = (message.content.charAt(0) === settings.prefix) ? message.content.substr(1, message.content.length) : null;
 
 	let cmd, args;
 

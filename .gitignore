@@ -1,3 +1,5 @@
 node_modules
 settings.json
 message.js
+db.json
+init.js
