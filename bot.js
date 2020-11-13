@@ -62,4 +62,10 @@ bot.on("message", (message) => {
 
 });
 
+client.on('guildMemberAdd', member => {
+  let logChannel = member.guild.channels.cache.find(channel => channel.name === "log");
+  if (!logChannel) return;
+  logChannel.send(`Bienvenue ${member.username} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
+});
+
 bot.login(settings.token);
