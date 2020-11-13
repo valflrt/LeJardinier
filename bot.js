@@ -8,11 +8,19 @@ require("colors");
 const bot = new Client();
 
 bot.on("ready", () => {
-	bot.user.setUsername(settings.username);
-	bot.user.setPresence(settings.activity);
 
-	console.log("\033c");
-	console.log(`${"connected".bgGreen.black}\n\nlogged in as: ${(bot.user.tag).cyan} - (${(bot.user.id).cyan})\n`);
+	(async () => {
+		console.log("\033c");
+		await bot.user.setUsername(settings.username);
+		console.log(` ${"[+]".green} Username setted`);
+		await bot.user.setPresence(settings.activity);
+		console.log(` ${"[+]".green} Presence setted`);
+
+		console.log(` ${"[+]".green} Logged in as: ${(bot.user.tag).cyan} - (${(bot.user.id).cyan})\n`);
+		console.log(" " + " connected ".bgGreen.black + "\n");
+		console.log(" message log:\n");
+	})();
+
 });
 
 bot.on("message", (message) => {
@@ -63,10 +71,10 @@ bot.on("message", (message) => {
 
 });
 
-client.on('guildMemberAdd', member => {
-  let logChannel = member.guild.channels.cache.find(channel => channel.name === "log");
-  if (!logChannel) return;
-  logChannel.send(`Bienvenue ${member.username} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
+bot.on('guildMemberAdd', member => {
+	let logChannel = member.guild.channels.cache.find(channel => channel.name === "log");
+	if (!logChannel) return;
+	logChannel.send(`Bienvenue ${member.username} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
 });
 
 bot.login(settings.token);
