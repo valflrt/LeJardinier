@@ -3,8 +3,8 @@ const { Client } = discord;
 const commands = require("./commands");
 const settings = require("./settings.json");
 const { RandomItem } = require("./utils/toolbox");
-require("colors");
 const { db } = require("./database/db");
+require("colors");
 
 const bot = new Client();
 
