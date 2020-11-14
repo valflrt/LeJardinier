@@ -134,21 +134,24 @@ commands.push(new Command("vraioufaux", "Vrai ou faux <argument>.", (message, ar
 
 commands.push(new Command("recolter", "Récolter les graines du jardin.", (message, args, bot) => {
 
-	if (db.get("servers").find({ id: message.guild.id }).has() === false) {
+	var json = require("./database/database.json");
+
+	if (!json.servers.find(server => server.id === message.guild.id)) {
 		addServer(message.guild.id);
-	} else {
-		var server = db.get("servers").find({ id: message.guild.id });
+		console.log("server added");
 	};
 
-	if (server.get("users").find({ id: message.author.id }).has() === false) {
+	var server = json.servers.find(server => server.id === message.guild.id);
+
+	if (!server.users.find(user => user.id === message.author.id)) {
 		addMember(message.guild.id, message.author.id);
-	} else {
-		var user = server.get("users").find({ id: message.author.id });
 	};
+
+	var user = server.users.find(user => user.id === message.author.id);
 
 	let seedAmount = Random(2, 6);
 
-	if (checkTimeout(message.guild.id, message.author.id) === true || user.get("timeout").value() === undefined) {
+	if (checkTimeout(message.guild.id, message.author.id) === true || user.timeout === undefined) {
 		updateSeeds(message.guild.id, message.author.id, seedAmount);
 		message.channel.send(`>>> ${RandomItem(["Bravo", "Bien joué"])} **${message.author.username}**, tu as récolté **${seedAmount} graines** ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])} !`);
 	} else {
