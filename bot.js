@@ -1,7 +1,7 @@
 const discord = require("discord.js");
 const { Client } = discord;
 const commands = require("./commands");
-const settings = require("./settings.json");
+const settings = require("./config.json");
 const { RandomItem } = require("./utils/toolbox");
 const { db } = require("./database/db");
 require("colors");

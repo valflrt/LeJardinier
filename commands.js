@@ -1,7 +1,7 @@
 const Command = require("./utils/command");
 const { Random, RandomItem, MsToHours } = require("./utils/toolbox");
 const fetch = require("node-fetch");
-const settings = require("./settings.json");
+const settings = require("./config.json");
 const { db, addServer, addMember, updateSeeds, getTimeleft } = require("./database/db");
 
 let commands = new Array();
