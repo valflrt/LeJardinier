@@ -1,3 +1,3 @@
 # LeJardinier
 
-A simple and fast discord bot (only french language).
+A simple and fast discord bot (french language only).
