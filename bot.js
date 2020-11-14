@@ -3,12 +3,14 @@ const { Client } = discord;
 const commands = require("./commands");
 const settings = require("./config.json");
 const { RandomItem } = require("./utils/toolbox");
-const { db } = require("./database/db");
+const { db } = require("./db");
 require("colors");
 
 const bot = new Client();
 
 bot.on("ready", () => {
+
+	// verifications and console log
 
 	console.log("\033c");
 	console.log("Loading...");
@@ -30,14 +32,19 @@ bot.on("ready", () => {
 
 bot.on("message", (message) => {
 
-	message.channel.stopTyping();
+	// logs every message
 
 	console.log(`${(message.author.tag).blue.bold}: ${message.content}`);
 
-	if (message.channel.type === "dm") {
-		message.channel.send("Désolé je ne fonctionne que dans les salon de serveurs :confounded:");
+	if (message.channel.type === "dm" || message.author.bot) {
+
+		// if the message is from a dm channel, the bot answer that it works only in server channels
+
+		message.channel.send("Désolé je ne fonctionne que dans les serveurs :confounded:");
 		return;
 	};
+
+	// checks if the message starts with the command prefix
 
 	const msg = (message.content.charAt(0) === settings.prefix) ? message.content.substr(1, message.content.length) : null;
 
@@ -54,11 +61,11 @@ bot.on("message", (message) => {
 
 	commands.forEach(async (command) => {
 		if (command.command !== "text" && command.command === cmd) {
-			message.channel.startTyping();
 			await command.execute(message, args, bot);
-			message.channel.stopTyping();
 		};
 	});
+
+	// anti "ok" (for fun) the same structure can be used as a swear words filter
 
 	message.content.split(" ").forEach(word => {
 		if (word == "ok" || word == "Ok" || word == "oK" || word == "OK") {
@@ -69,10 +76,14 @@ bot.on("message", (message) => {
 
 });
 
+// sends message when there is a new guild member
+
 bot.on('guildMemberAdd', member => {
 	let logChannel = member.guild.channels.cache.find(channel => channel.name === "log");
 	if (!logChannel) return;
 	logChannel.send(`Bienvenue ${member.username} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
 });
+
+// bot login
 
 bot.login(settings.token);
