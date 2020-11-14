@@ -52,13 +52,6 @@ bot.on("message", (message) => {
 		args = null;
 	};
 
-	let msgStats = {
-		user: message.author,
-		fullMessage: message.content,
-		command: cmd,
-		arguments: args
-	};
-
 	commands.forEach(async (command) => {
 		if (command.command !== "text" && command.command === cmd) {
 			message.channel.startTyping();

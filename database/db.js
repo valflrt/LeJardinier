@@ -16,16 +16,23 @@ const addMember = (serverId, userId) => {
 	db.get("servers")
 		.find({ id: serverId })
 		.get("users")
-		.push({ id: userId, seeds: 0, timeout: (new Date().getTime() - 3600001) })
+		.push({ id: userId, seeds: 0, timeout: (new Date().getTime() - 3600001), gettingRate: 1 })
 		.write();
 };
 
 const updateSeeds = (serverId, userId, amount) => {
+	let gettingRate = db.get("servers")
+		.find({ id: serverId })
+		.get("users")
+		.find({ id: userId })
+		.get("gettingRate")
+		.value();
+
 	db.get("servers")
 		.find({ id: serverId })
 		.get("users")
 		.find({ id: userId })
-		.update("seeds", seeds => seeds += amount)
+		.update("seeds", seeds => seeds += (amount * gettingRate))
 		.set("timeout", new Date().getTime())
 		.write();
 };

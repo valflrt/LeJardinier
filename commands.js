@@ -167,19 +167,18 @@ commands.push(new Command("inventaire", "Montre votre inventaire.", (message, ar
 		.value();
 
 	message.channel.send(`>>> Voici ${RandomItem(["ton inventaire", "tes affaires"])} **${message.author.username}** ${RandomItem([":partying_face:", ":thumbsup:", ":ok_hand:"])}\n\`\`\`Graines: ${inventaire.seeds}\`\`\``);
+
 }));
 
 /*-----------------------------------*/
 
 commands.push(new Command("acheter", "Montre les éléments du magasin, si un <argument> est donné achète l'élément correspondant.", (message, args, bot) => {
 
-	let inventaire = db.get("servers")
-		.find({ id: message.guild.id })
-		.get("users")
-		.find({ id: message.author.id })
-		.value();
+	let item = db.get("shop.items")
+		.find({ name: args.join });
 
 	message.channel.send(`>>> Voici ${RandomItem(["ton inventaire", "tes affaires"])} **${message.author.username}** ${RandomItem([":partying_face:", ":thumbsup:", ":ok_hand:"])}\n\`\`\`Graines: ${inventaire.seeds}\`\`\``);
+
 }));
 
 /*-----------------------------------*/
