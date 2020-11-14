@@ -1,9 +1,8 @@
 const Command = require("./utils/command");
-const { Random, RandomItem } = require("./utils/toolbox");
+const { Random, RandomItem, MsToHours } = require("./utils/toolbox");
 const fetch = require("node-fetch");
 const settings = require("./settings.json");
-const { db, addServer, addMember, updateMoney } = require("./utils/database");
-const datas = require("./db.json");
+const { db, addServer, addMember, updateSeeds, checkTimeout } = require("./utils/servers");
 
 let commands = new Array();
 
@@ -107,11 +106,9 @@ commands.push(new Command("meteo", "Le bot donne la météo pour la ville de <ar
 	fetch(url)
 		.then(response => response.json())
 		.then(response => {
-			console.log(response);
 			message.channel.send(`>>> Voici la météo dans la ville de **${args.join(" ")}** :partying_face:\n\`\`\`Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${~~response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\nVitesse du vent: ${response.wind.speed}Km/h\nSens du vent: ${response.wind.deg}°\`\`\``);
 		})
 		.catch((err) => {
-			console.log(err);
 			message.channel.send(`Oups je ne peux pas trouver la météo pour cette ville... :confounded:`);
 		});
 
@@ -137,27 +134,48 @@ commands.push(new Command("vraioufaux", "Vrai ou faux <argument>.", (message, ar
 
 commands.push(new Command("recolter", "Récolter les graines du jardin.", (message, args, bot) => {
 
-	if (!datas.servers.find(server => server.id === message.guild.id)) {
+	if (db.get("servers").find({ id: message.guild.id }).has() === false) {
 		addServer(message.guild.id);
 	} else {
-		var server = datas.servers.find(server => server.id === message.guild.id);
+		var server = db.get("servers").find({ id: message.guild.id });
 	};
 
-	if (!server.users.find(user => user.id === message.author.id)) {
+	if (server.get("users").find({ id: message.author.id }).has() === false) {
 		addMember(message.guild.id, message.author.id);
 	} else {
-		var user = server.users.find(user => user.id === message.author.id);
-	};
-
-	if (user) {
-
+		var user = server.get("users").find({ id: message.author.id });
 	};
 
 	let seedAmount = Random(2, 6);
 
-	updateMoney(message.guild.id, message.author.id, seedAmount);
+	if (checkTimeout(message.guild.id, message.author.id) === true || user.get("timeout").value() === undefined) {
+		updateSeeds(message.guild.id, message.author.id, seedAmount);
+		message.channel.send(`>>> ${RandomItem(["Bravo", "Bien joué"])} **${message.author.username}**, tu as récolté **${seedAmount} graines** ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])} !`);
+	} else {
+		let userTimeout = db.get("servers")
+			.find({ id: message.guild.id })
+			.get("users")
+			.find({ id: message.author.id })
+			.get("timeout")
+			.value();
 
-	message.channel.send(`>>> Bravo **${message.author.username}**, tu as récolté **${seedAmount} graines** ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])} !`);
+		let timeleft = MsToHours(43200000 - (new Date().getTime() - userTimeout));
+
+		message.channel.send(`>>> Désolé, il faut encore que tu attendes ${timeleft.hours}h, ${timeleft.minutes}mn, ${timeleft.seconds}s pour pouvoir recolter tes graines :confounded:`)
+	};
+}));
+
+/*-----------------------------------*/
+
+commands.push(new Command("inventaire", "Montre votre inventaire.", (message, args, bot) => {
+
+	let inventaire = db.get("servers")
+		.find({ id: message.guild.id })
+		.get("users")
+		.find({ id: message.author.id })
+		.value();
+
+	message.channel.send(`>>> Voici ${RandomItem(["ton inventaire", "tes affaires"])} **${message.author.username}** ${RandomItem([":partying_face:", ":thumbsup:", ":ok_hand:"])}\n\`\`\`Graines: ${inventaire.seeds}\`\`\``);
 }));
 
 /*-----------------------------------*/

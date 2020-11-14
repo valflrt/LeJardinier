@@ -4,7 +4,7 @@ const commands = require("./commands");
 const settings = require("./settings.json");
 const { RandomItem } = require("./utils/toolbox");
 require("colors");
-const { db } = require("./utils/database");
+const { db } = require("./utils/servers");
 
 const bot = new Client();
 
@@ -16,6 +16,7 @@ bot.on("ready", () => {
 		console.log(` ${"[+]".green} Username setted`);
 		await bot.user.setPresence(settings.activity);
 		console.log(` ${"[+]".green} Presence set`);
+		await db.write();
 		console.log(` ${"[+]".green} Database ready`);
 
 		console.log(` ${"[+]".green} Logged in as: ${(bot.user.tag).cyan} - (${(bot.user.id).cyan})\n`);
@@ -28,7 +29,7 @@ bot.on("message", (message) => {
 
 	message.channel.stopTyping();
 
-	console.log(`${message.author.tag}: ${message.content}`);
+	console.log(`${(message.author.tag).blue.bold}: ${message.content}`);
 
 	if (message.channel.type === "dm") {
 		message.channel.send("Désolé je ne fonctionne que dans les salon de serveurs :confounded:");
