@@ -2,7 +2,7 @@ const Command = require("./utils/command");
 const { Random, RandomItem, MsToHours } = require("./utils/toolbox");
 const fetch = require("node-fetch");
 const settings = require("./settings.json");
-const { db, addServer, addMember, updateSeeds, checkTimeout } = require("./database/db");
+const { db, addServer, addMember, updateSeeds, getTimeleft } = require("./database/db");
 
 let commands = new Array();
 
@@ -132,39 +132,27 @@ commands.push(new Command("vraioufaux", "Vrai ou faux <argument>.", (message, ar
 
 /*-----------------------------------*/
 
-commands.push(new Command("recolter", "Récolter les graines du jardin.", (message, args, bot) => {
+commands.push(new Command("recolter", "Récolter des graines du jardin.", (message, args, bot) => {
 
-	var json = require("./database/database.json");
-
-	if (!json.servers.find(server => server.id === message.guild.id)) {
+	if (!db.get("servers").find({ id: message.guild.id }).value()) {
 		addServer(message.guild.id);
 		console.log("server added");
 	};
 
-	var server = json.servers.find(server => server.id === message.guild.id);
+	let server = db.get("servers").find({ id: message.guild.id });
 
-	if (!server.users.find(user => user.id === message.author.id)) {
+	if (!server.get("users").find({ id: message.author.id }).value()) {
 		addMember(message.guild.id, message.author.id);
 	};
 
-	var user = server.users.find(user => user.id === message.author.id);
-
 	let seedAmount = Random(2, 6);
 
-	if (checkTimeout(message.guild.id, message.author.id) === true || user.timeout === undefined) {
+	if (getTimeleft(message.guild.id, message.author.id).timeReached === true) {
 		updateSeeds(message.guild.id, message.author.id, seedAmount);
 		message.channel.send(`>>> ${RandomItem(["Bravo", "Bien joué"])} **${message.author.username}**, tu as récolté **${seedAmount} graines** ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])} !`);
 	} else {
-		let userTimeout = db.get("servers")
-			.find({ id: message.guild.id })
-			.get("users")
-			.find({ id: message.author.id })
-			.get("timeout")
-			.value();
-
-		let timeleft = MsToHours(43200000 - (new Date().getTime() - userTimeout));
-
-		message.channel.send(`>>> Désolé, il faut encore que tu attendes ${timeleft.hours}h, ${timeleft.minutes}mn, ${timeleft.seconds}s pour pouvoir recolter tes graines :confounded:`)
+		let { minutes, seconds } = getTimeleft(message.guild.id, message.author.id);
+		message.channel.send(`>>> Désolé, il reste ${minutes}mn, ${seconds}s avant de pouvoir recolter des graines de nouveau :confounded:`);
 	};
 }));
 
@@ -183,7 +171,7 @@ commands.push(new Command("inventaire", "Montre votre inventaire.", (message, ar
 
 /*-----------------------------------*/
 
-commands.push(new Command("acheter", "Montre les éléments du magasin, si un <argument> est donné l'élément correspondant est acheté.", (message, args, bot) => {
+commands.push(new Command("acheter", "Montre les éléments du magasin, si un <argument> est donné achète l'élément correspondant.", (message, args, bot) => {
 
 	let inventaire = db.get("servers")
 		.find({ id: message.guild.id })

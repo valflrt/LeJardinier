@@ -1,6 +1,5 @@
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
-
 const adapter = new FileSync('./database/database.json');
 const db = low(adapter);
 
@@ -17,7 +16,7 @@ const addMember = (serverId, userId) => {
 	db.get("servers")
 		.find({ id: serverId })
 		.get("users")
-		.push({ id: userId, seeds: 0, timeout: undefined })
+		.push({ id: userId, seeds: 0, timeout: (new Date().getTime() - 3600001) })
 		.write();
 };
 
@@ -31,20 +30,28 @@ const updateSeeds = (serverId, userId, amount) => {
 		.write();
 };
 
-const checkTimeout = (serverId, userId, currentTime) => {
-	let userTimeout = db.get("servers")
+const getTimeleft = (serverId, userId) => {
+
+	let timeToWait = 3600000;
+
+	let userLastTime = db.get("servers")
 		.find({ id: serverId })
 		.get("users")
 		.find({ id: userId })
 		.get("timeout")
 		.value();
 
-	let difference = currentTime - userTimeout;
+	let timeleftMs = timeToWait - (new Date().getTime() - userLastTime);
 
-	let returned = (difference >= 43200000) ? true : false;
+	let milliseconds = parseInt((timeleftMs % 1000) / 100),
+		seconds = Math.floor((timeleftMs / 1000) % 60),
+		minutes = Math.floor((timeleftMs / (1000 * 60)) % 60);
 
-	return returned;
-
+	return {
+		minutes: ((minutes < 10) ? 0 + minutes : minutes),
+		seconds: ((seconds < 10) ? 0 + seconds : seconds),
+		timeReached: (((new Date().getTime() - userLastTime) >= timeToWait) ? true : false)
+	};
 };
 
-module.exports = { db, addServer, addMember, updateSeeds, checkTimeout };
+module.exports = { db, addServer, addMember, updateSeeds, getTimeleft };
