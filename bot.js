@@ -4,11 +4,14 @@ const commands = require("./commands");
 const settings = require("./settings.json");
 const { RandomItem } = require("./utils/toolbox");
 require("colors");
-const { db } = require("./utils/servers");
+const { db } = require("./database/db");
 
 const bot = new Client();
 
 bot.on("ready", () => {
+
+	console.log("\033c");
+	console.log("Loading...");
 
 	(async () => {
 		console.log("\033c");

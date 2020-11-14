@@ -2,7 +2,7 @@ const Command = require("./utils/command");
 const { Random, RandomItem, MsToHours } = require("./utils/toolbox");
 const fetch = require("node-fetch");
 const settings = require("./settings.json");
-const { db, addServer, addMember, updateSeeds, checkTimeout } = require("./utils/servers");
+const { db, addServer, addMember, updateSeeds, checkTimeout } = require("./database/db");
 
 let commands = new Array();
 
@@ -180,7 +180,16 @@ commands.push(new Command("inventaire", "Montre votre inventaire.", (message, ar
 
 /*-----------------------------------*/
 
-commands.push(new Command("text", "\n- Commandes d'administration -\n"));
+commands.push(new Command("acheter", "Montre les éléments du magasin, si un <argument> est donné l'élément correspondant est acheté.", (message, args, bot) => {
+
+	let inventaire = db.get("servers")
+		.find({ id: message.guild.id })
+		.get("users")
+		.find({ id: message.author.id })
+		.value();
+
+	message.channel.send(`>>> Voici ${RandomItem(["ton inventaire", "tes affaires"])} **${message.author.username}** ${RandomItem([":partying_face:", ":thumbsup:", ":ok_hand:"])}\n\`\`\`Graines: ${inventaire.seeds}\`\`\``);
+}));
 
 /*-----------------------------------*/
 
