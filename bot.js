@@ -18,7 +18,7 @@ bot.on("ready", () => {
 	(async () => {
 		console.log("\033c");
 		await bot.user.setUsername(settings.username);
-		console.log(` ${"[+]".green} Username setted`);
+		console.log(` ${"[+]".green} Username set`);
 		await bot.user.setPresence(settings.activity);
 		console.log(` ${"[+]".green} Presence set`);
 		await db.write();
@@ -38,11 +38,9 @@ bot.on("message", (message) => {
 
 	// skip if the message comes from the bot
 
-	if (message.author.bot) {
+	if (message.author.bot === true) {
 		return;
-	};
-
-	if (message.channel.type === "dm") {
+	} else if (message.channel.type === "dm") {
 
 		// if the message is from a dm channel, the bot answer that it works only in server channels
 
