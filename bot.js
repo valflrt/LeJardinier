@@ -36,15 +36,17 @@ bot.on("message", (message) => {
 
 	console.log(`${(message.author.tag).blue.bold}: ${message.content}`);
 
+	// skip if the message comes from the bot
+
+	if (message.author.bot) {
+		return;
+	};
+
 	if (message.channel.type === "dm") {
 
 		// if the message is from a dm channel, the bot answer that it works only in server channels
 
 		message.channel.send("Désolé je ne fonctionne que dans les serveurs :confounded:");
-		return;
-	};
-
-	if (message.author.bot) {
 		return;
 	};
 
