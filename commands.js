@@ -1,10 +1,10 @@
-iconst { Collection } = require("./utils/collection");
+const { Collection } = require("./utils/collection");
 const { Random, RandomItem, MsToHours } = require("./utils/toolbox");
 const fetch = require("node-fetch");
 const settings = require("./config.json");
 const { db, addServer, addMember, setSeed, getTimeleft, buyItem, getInventaire } = require("./db");
 
-tlet collection = new Collection();
+let collection = new Collection();
 
 /*-----------------------------------*/
 
@@ -205,7 +205,9 @@ collection.addCommand("recolter", "Récolter des graines du jardin.", (requireme
 
 // gives you your inventaire
 
-collection.addCommand("inventaire", "Montre votre inventaire.", (message, args, bot) => {
+collection.addCommand("inventaire", "Montre votre inventaire.", (requirements) => {
+
+	let { message, args } = requirements;
 
 	if (getInventaire(message.guild.id, message.author.id, args.join(" ")) === null) {
 		message.reply(`>>> Il faut d'abord utiliser la commande *!recolter* pour initialiser ton inventaire.`)
@@ -225,7 +227,9 @@ collection.addCommand("inventaire", "Montre votre inventaire.", (message, args, 
 
 // used to buy an item in the shop
 
-collection.addCommand("acheter", "Montre les éléments du magasin, si un <argument> est donné achète l'élément correspondant.", (message, args, bot) => {
+collection.addCommand("acheter", "Montre les éléments du magasin, si un <argument> est donné achète l'élément correspondant.", (requirements) => {
+
+	let { message, args } = requirements;
 
 	if (args.join(" ") === "") {
 		let items = db.get("shop.items").value();
