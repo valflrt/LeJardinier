@@ -52,22 +52,22 @@ bot.on("message", (message) => {
 
 	const msg = (message.content.charAt(0) === settings.prefix) ? message.content.substr(1, message.content.length) : null;
 
-	let cmd, args;
+	let name, args;
 
 	if (msg !== null) {
 		decompMsg = msg.split(" ");
-		cmd = decompMsg.shift().toLowerCase();
+		name = decompMsg.shift().toLowerCase();
 		args = decompMsg;
 	} else {
 		cmd = null;
 		args = null;
 	};
 
-	commands.forEach(async (command) => {
-		if (command.command !== "text" && command.command === cmd) {
-			await command.execute(message, args, bot);
-		};
-	});
+	if (commands.exists(name) === true) {
+		commands.execute(name, { message, args, bot });
+	} else {
+		message.reply(">>> Cette commande n'existe pas !")
+	};
 
 	// anti "ok" (for fun) the same structure can be used as a swear words filter
 
@@ -85,7 +85,7 @@ bot.on("message", (message) => {
 bot.on('guildMemberAdd', member => {
 	let logChannel = member.guild.channels.cache.find(channel => channel.name === "log");
 	if (!logChannel) return;
-	logChannel.send(`Bienvenue ${member.username} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
+	logChannel.send(`Bienvenue ${member.user.username} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
 });
 
 // bot login
