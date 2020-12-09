@@ -40,7 +40,7 @@ module.exports.Collection = class Collection {
 
 	toList() {
 		return this.commands.map(command => {
-			return (command.isCommand === true) ? `**${command.name}**\n${command.description}` : `\n__**${command.name}**__\n`;
+			return (command.isCommand === true) ? `    [${command.name}] ${command.description}` : `\n - ${command.name}\n`;
 		}).join("\n");
 	};
 };

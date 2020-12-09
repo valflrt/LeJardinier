@@ -48,44 +48,38 @@ bot.on("message", (message) => {
 		return;
 	};
 
-	// checks if the message starts with the command prefix
+	// detect command prfix and answer
 
-	const msg = (message.content.charAt(0) === settings.prefix) ? message.content.substr(1, message.content.length) : null;
+	if (message.content.startsWith(settings.prefix)) {
 
-	let name, args;
+		let content = message.content.replace(settings.prefix, "").split(" ");
+		let commandName = content.shift();
+		let args = content;
 
-	if (msg !== null) {
-		decompMsg = msg.split(" ");
-		name = decompMsg.shift().toLowerCase();
-		args = decompMsg;
-	} else {
-		cmd = null;
-		args = null;
-	};
-
-	if (commands.exists(name) === true) {
-		commands.execute(name, { message, args, bot });
-	} else {
-		message.reply(">>> Cette commande n'existe pas !")
-	};
-
-	// anti "ok" (for fun) the same structure can be used as a swear words filter
-
-	message.content.split(" ").forEach(word => {
-		if (word == "ok" || word == "Ok" || word == "oK" || word == "OK") {
-			message.channel.send("Grrrr")
-				.then(message.react("🤬"));
+		if (commands.exists(commandName) === true) {
+			commands.execute(commandName, { message, args, bot });
+		} else {
+			message.reply("Cette commande n'existe pas !");
 		};
-	});
+
+	};
+
+	// anti "ok" (for fun) the same structure can be used as a swear word filter
+
+	if (message.content.match(/^.*\s[oO][kK]\s.*$/g) !== null || message.content.match(/^[oO][kK]$/g) !== null) {
+		message.react("🤬");
+	};
 
 });
 
 // sends message when there is a new guild member
 
 bot.on('guildMemberAdd', member => {
-	let logChannel = member.guild.channels.cache.find(channel => channel.name === "log");
-	if (!logChannel) return;
-	logChannel.send(`Bienvenue ${member.user.username} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
+	member.guild.channels.cache.find(channel => {
+		if (channel.name == "logs") {
+			channel.send(`Bienvenue ${member.user} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
+		};
+	});
 });
 
 // bot login

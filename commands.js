@@ -1,80 +1,80 @@
-const { Collection } = require("./utils/collection");
-const { Random, RandomItem, MsToHours } = require("./utils/toolbox");
+const { Random, RandomItem, FormatDateFromMs } = require("./utils/toolbox");
 const fetch = require("node-fetch");
 const settings = require("./config.json");
 const { db, addServer, addMember, setSeed, getTimeleft, buyItem, getInventaire } = require("./db");
+const { Collection } = require("./utils/collection");
 
-let collection = new Collection();
+let commands = new Collection();
 
 /*-----------------------------------*/
 
-collection.addCategoryName("- Commandes d'aide -");
+commands.addCategoryName("Commandes d'aide");
 
 // help command
 
-collection.addCommand("help", "Donne la liste des commandes disponibles.", (requirements) => {
+commands.addCommand("help", "Donne la liste des commandes disponibles.", (requirements) => {
 
 	let { message } = requirements;
 
-	message.reply(`>>> Voici une liste des commandes disponibles ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}\n\`\`\`${collection.toList()}\`\`\``);
+	message.reply(`Voici une liste des commandes disponibles ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}\n\`\`\`${commands.toList()}\`\`\``);
 
 });
 
 // gives a link to invite this bot to one of your guild
 
-collection.addCommand("inviter", "Inviter ce bot sur un autre serveur.", (requirements) => {
+commands.addCommand("inviter", "Inviter ce bot sur un autre serveur.", (requirements) => {
 
 	let { message, bot } = requirements;
 
 
 	bot.generateInvite(['SEND_MESSAGES', 'MANAGE_GUILD', 'MENTION_EVERYONE'])
 		.then(link => {
-			message.reply(`>>> Voici mon lien d'invitation ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])} :\n${link}\n*Mais attention, je suis en developpement...*`);
+			message.reply(`Voici mon lien d'invitation ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])} :\n${link}\n*Mais attention, je suis en developpement...*`);
 		});
 
 });
 
 /*-----------------------------------*/
 
-collection.addCategoryName("- Commandes basiques -");
+commands.addCategoryName("Commandes basiques");
 
 // test command (checks if the bot is working correctly)
 
-collection.addCommand("ping", "Commande de test.", (requirements) => {
+commands.addCommand("ping", "Commande de test.", (requirements) => {
 
 	let { message } = requirements;
 
-	message.reply(`>>> Pong :ping_pong: !`);
+	message.reply(`Pong :ping_pong: !`);
 
 });
 
 // told "hello" to the bot and gives you an answer
 
-collection.addCommand("hey", "Dire bonjour au bot.", (requirements) => {
+commands.addCommand("hey", "Dire bonjour au bot.", (requirements) => {
 
 	let { message } = requirements;
 
-	message.reply(`>>> ${RandomItem(["Salut", "Coucou", "Hey"])} **${message.author.username}** ! ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}`);
+	message.reply(`${RandomItem(["Salut", "Coucou", "Hey"])} **${message.author.username}** ! ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}`);
 
 });
 
 // makes the bot repeating <argument>
 
-collection.addCommand("repete", "Faire répèter <argument> au bot.", (requirements) => {
+commands.addCommand("repete", "Faire répèter <argument> au bot.", (requirements) => {
 
 	let { message, args } = requirements;
 
-	message.reply(">>> " + args.join(" "));
+	message.reply("" + args.join(" "));
 
 });
 
 // makes the bot playing to <argument>
 
-collection.addCommand("joue", "Faire jouer le bot à <argument>.", (requirements) => {
+commands.addCommand("joue", "Faire jouer le bot à <argument>.", (requirements) => {
 
 	let { message, args, bot } = requirements;
 
-	message.reply(`>>> Comme tu veux ${RandomItem([":ok_hand:", ":thumbsup:"])}`);
+	message.reply(`Comme tu veux ${RandomItem([":ok_hand:", ":thumbsup:"])}`);
 	bot.user.setPresence({ activity: { name: args.join(" ") } });
 	setTimeout(() => {
 		bot.user.setPresence(settings.activity);
@@ -84,47 +84,49 @@ collection.addCommand("joue", "Faire jouer le bot à <argument>.", (requirements
 
 /*-----------------------------------*/
 
-collection.addCategoryName("- Commandes d'information -");
+commands.addCategoryName("Commandes d'information");
 
 // get information about yourself
 
-collection.addCommand("moi", "Obtenir des informations sur vous.", (requirements) => {
+commands.addCommand("moi", "Obtenir des informations sur vous.", (requirements) => {
 
 	let { message } = requirements;
 
-	message.reply(`>>> Voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}\n\`\`\`Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${message}\`\`\``);
+	let ms = message.guild.members.cache.find(member => member.id).joinedTimestamp;
+
+	message.reply(`Voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}\n\`\`\`Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${FormatDateFromMs(ms)}\`\`\``);
 
 });
 
 // get information about this guild
 
-collection.addCommand("serveur", "Obtenir des informations sur ce serveur.", (requirements) => {
+commands.addCommand("serveur", "Obtenir des informations sur ce serveur.", (requirements) => {
 
 	let { message } = requirements;
 
-	message.reply(`>>> Voici quelques informations à propos de **ce serveur** ${RandomItem([":yum:", ":partying_face:"])}\n\`\`\`Nom du serveur: ${message.guild.name}\nNuméro d'identification: ${message.guild.id}\nNombre de membres: ${message.guild.memberCount}\`\`\``);
+	message.reply(`Voici quelques informations à propos de **${message.guild.name}** ${RandomItem([":yum:", ":partying_face:"])}\n\`\`\`Nom du serveur: ${message.guild.name}\nNuméro d'identification: ${message.guild.id}\nNombre de membres: ${message.guild.memberCount}\nCréé le: ${FormatDateFromMs(message.guild.createdTimestamp)}\`\`\``);
 
 });
 
 // get somebody's avatar
 
-collection.addCommand("avatar", "Obtenir l'avatar de la personne mentionnée en <argument>.", (requirements) => {
+commands.addCommand("avatar", "Obtenir l'avatar de la personne mentionnée en <argument>.", (requirements) => {
 
 	let { message } = requirements;
 
 	// checks if there is a mention in the message
 
 	if (message.mentions.length === 0) {
-		message.reply(`>>> Voici l'avatar de **${message.author.username}** ${RandomItem([":grin:", ":partying_face:"])}`, { files: [message.author.displayAvatarURL()] });
+		message.reply(`Voici l'avatar de **${message.author.username}** ${RandomItem([":grin:", ":partying_face:"])}`, { files: [message.author.displayAvatarURL()] });
 	} else {
-		message.reply(`>>> Voici l'avatar de **${message.mentions.members.first().user.username}** ${RandomItem([":grin:", ":partying_face:"])}`, { files: [message.mentions.members.first().user.displayAvatarURL()] });
+		message.reply(`Voici l'avatar de **${message.mentions.members.first().user.username}** ${RandomItem([":grin:", ":partying_face:"])}`, { files: [message.mentions.members.first().user.displayAvatarURL()] });
 	};
 
 });
 
 // gives weather
 
-collection.addCommand("meteo", "Le bot donne la météo pour la ville de <argument>.", (requirements) => {
+commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument>.", (requirements) => {
 
 	let { message, args } = requirements;
 
@@ -135,7 +137,7 @@ collection.addCommand("meteo", "Le bot donne la météo pour la ville de <argume
 	fetch(url)
 		.then(response => response.json())
 		.then(response => {
-			message.reply(`>>> Voici la météo dans la ville de **${args.join(" ")}** :partying_face:\n\`\`\`Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${~~response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\nVitesse du vent: ${response.wind.speed}Km/h\nSens du vent: ${response.wind.deg}°\`\`\``);
+			message.reply(`Voici la météo dans la ville de **${args.join(" ")}** :partying_face:\n\`\`\`Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${~~response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\nVitesse du vent: ${response.wind.speed}Km/h\nSens du vent: ${response.wind.deg}°\`\`\``);
 		})
 		.catch((err) => {
 			message.reply(`Oups, il y a eu un problème lors de la recherche de la météo :confounded:\nPeut-être que tu as mal écris le nom de la ville ou qu'elle n'existe pas.\n*Mais c'est peut-être moi qui n'ai pas fonctionné cette fois ci...*`);
@@ -145,31 +147,31 @@ collection.addCommand("meteo", "Le bot donne la météo pour la ville de <argume
 
 /*-----------------------------------*/
 
-collection.addCategoryName("- Commandes de divertissement -");
+commands.addCategoryName("Commandes de divertissement");
 
 // gives a random rate of <argument>
 
-collection.addCommand("taux", "Taux aléatoire de <argument>.", (requirements) => {
+commands.addCommand("taux", "Taux aléatoire de <argument>.", (requirements) => {
 
 	let { message, args } = requirements;
 
-	message.reply(`>>> **${message.author.username}** a un taux de ${args.join(" ") || "quelque chose"} de ${Random(0, 100)}%...`);
+	message.reply(`**${message.author.username}** a un taux de ${args.join(" ") || "quelque chose"} de ${Random(0, 100)}%...`);
 
 });
 
 // gives true or false randomly
 
-collection.addCommand("vraioufaux", "Vrai ou faux <argument>.", (requirements) => {
+commands.addCommand("vraioufaux", "Vrai ou faux <argument>.", (requirements) => {
 
 	let { message, args, bot } = requirements;
 
-	message.reply(`>>> **${message.author.username}**: ${args.join(" ") || "quelque chose"}\n**${bot.user.username}**: ${RandomItem(["Vrai", "Faux"])} !`);
+	message.reply(`**${message.author.username}**: ${args.join(" ") || "quelque chose"}\n**${bot.user.username}**: ${RandomItem(["Vrai", "Faux"])} !`);
 
 });
 
 // "havest" -> gives you seeds
 
-collection.addCommand("recolter", "Récolter des graines du jardin.", (requirements) => {
+commands.addCommand("recolter", "Récolter des graines du jardin.", (requirements) => {
 
 	let { message } = requirements;
 
@@ -196,21 +198,21 @@ collection.addCommand("recolter", "Récolter des graines du jardin.", (requireme
 
 	if (getTimeleft(message.guild.id, message.author.id).timeReached === true) {
 		setSeed(message.guild.id, message.author.id, seedAmount);
-		message.reply(`>>> ${RandomItem(["Bravo", "Bien joué"])} **${message.author.username}**, tu as récolté **${seedAmount} graines** ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])} !`);
+		message.reply(`${RandomItem(["Bravo", "Bien joué"])} **${message.author.username}**, tu as récolté **${seedAmount} graines** ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])} !`);
 	} else {
 		let { minutes, seconds } = getTimeleft(message.guild.id, message.author.id);
-		message.reply(`>>> Désolé, il reste ${minutes}mn, ${seconds}s avant de pouvoir recolter des graines à nouveau :confounded:`);
+		message.reply(`Désolé, il reste ${minutes}mn, ${seconds}s avant de pouvoir recolter des graines à nouveau :confounded:`);
 	};
 });
 
 // gives you your inventaire
 
-collection.addCommand("inventaire", "Montre votre inventaire.", (requirements) => {
+commands.addCommand("inventaire", "Montre votre inventaire.", (requirements) => {
 
 	let { message, args } = requirements;
 
 	if (getInventaire(message.guild.id, message.author.id, args.join(" ")) === null) {
-		message.reply(`>>> Il faut d'abord utiliser la commande *!recolter* pour initialiser ton inventaire.`)
+		message.reply(`Il faut d'abord utiliser la commande *!recolter* pour initialiser ton inventaire.`)
 	} else {
 		let inventaire = getInventaire(message.guild.id, message.author.id, args.join(" "));
 		let formattedItems = () => {
@@ -220,14 +222,14 @@ collection.addCommand("inventaire", "Montre votre inventaire.", (requirements) =
 
 			return byLineItems.join(", ");
 		};
-		message.reply(`>>> Voici ${RandomItem(["ton inventaire", "tes affaires"])} **${message.author.username}** ${RandomItem([":partying_face:", ":thumbsup:", ":ok_hand:"])}\n\`\`\`Graines: ${inventaire.seeds}\nItems: ${formattedItems()}\`\`\``);
+		message.reply(`Voici ${RandomItem(["ton inventaire", "tes affaires"])} **${message.author.username}** ${RandomItem([":partying_face:", ":thumbsup:", ":ok_hand:"])}\n\`\`\`Graines: ${inventaire.seeds}\nItems: ${formattedItems()}\`\`\``);
 	};
 
 });
 
 // used to buy an item in the shop
 
-collection.addCommand("acheter", "Montre les éléments du magasin, si un <argument> est donné achète l'élément correspondant.", (requirements) => {
+commands.addCommand("acheter", "Montre les éléments du magasin, si un <argument> est donné achète l'élément correspondant.", (requirements) => {
 
 	let { message, args } = requirements;
 
@@ -246,14 +248,14 @@ collection.addCommand("acheter", "Montre les éléments du magasin, si un <argum
 			return byLineItems.join("\n");
 		};
 
-		message.reply(`>>> Voici les items que tu peux acheter:\n\`\`\`${formattedItems()}\`\`\``);
+		message.reply(`Voici les items que tu peux acheter:\n\`\`\`${formattedItems()}\`\`\``);
 	} else {
 		buyItem(message.guild.id, message.author.id, args.join(" "))
 			.then((item) => {
-				message.reply(`>>> Tu as maintenant en ta possession \`${item.name}\` **${message.author.username}** ${RandomItem([":partying_face:", ":thumbsup:"])}`)
+				message.reply(`Tu as maintenant en ta possession \`${item.name}\` **${message.author.username}** ${RandomItem([":partying_face:", ":thumbsup:"])}`)
 			})
 			.catch(err => {
-				message.reply(">>> " + err);
+				message.reply("" + err);
 			});
 	};
 
@@ -261,4 +263,4 @@ collection.addCommand("acheter", "Montre les éléments du magasin, si un <argum
 
 /*-----------------------------------*/
 
-module.exports = collection;
+module.exports = commands;
