@@ -84,6 +84,72 @@ commands.addCommand("joue", "Faire jouer le bot à <argument>.", (requirements) 
 
 /*-----------------------------------*/
 
+commands.addCategoryName("Commandes d'administration");
+
+commands.addCommand("kick", "Kicker le membre mentionné dans <argument1> et règle la raison avec <argument2>.", (requirements) => {
+
+	let { message, args } = requirements;
+
+	if (message.member.hasPermission('KICK_MEMBERS') === true) {
+
+		let toKick = message.mentions.users.first();
+
+		if (toKick || message.mentions.users.keyArray().length > 1) {
+
+			args.shift();
+
+			message.guild.members.cache.get(toKick.id).send(`${toKick}, tu as été kické du serveur **${message.guild}** par **${message.author.username}**...\nRaison: ${args}`)
+				.then(() => {
+					message.guild.members.cache.get(toKick.id).kick();
+					message.reply(`fait !\nJ'espère que tu sais ce que tu fais...`);
+				})
+				.catch(err => {
+					message.reply(`erreur !\nIl y a eu un bug lors du kickage de <@${toKick.id}> :bug:`);
+				});
+
+		} else {
+			message.reply(`tu n'as pas mentionné de membre (ou trop)... ça ne risque pas de marcher !`);
+		};
+
+	} else {
+		message.reply(`tu ne possède pas la permission de kicker des membres...`);
+	};
+
+});
+
+commands.addCommand("ban", "Banni le membre mentionné dans <argument1> et règle la raison avec <argument2>.", (requirements) => {
+
+	let { message, args } = requirements;
+
+	if (message.member.hasPermission('BAN_MEMBERS') === true) {
+
+		let toBan = message.mentions.users.first();
+
+		if (toBan || message.mentions.users.keyArray().length > 1) {
+
+			args.shift();
+
+			message.guild.members.cache.get(toBan.id).send(`${toBan}, tu as été banni du serveur **${message.guild}** par **${message.author.username}**...\nRaison: ${args}`)
+				.then(() => {
+					message.guild.members.cache.get(toBan.id).ban();
+					message.reply(`fait !\nJ'espère que tu sais ce que tu fais...`);
+				})
+				.catch(err => {
+					message.reply(`erreur !\nIl y a eu un bug lors du kickage de <@${toBan.id}> :bug:`);
+				});
+
+		} else {
+			message.reply(`tu n'as pas mentionné de membre (ou trop)... ça ne risque pas de marcher !`);
+		};
+
+	} else {
+		message.reply(`tu ne possède pas la permission de kicker des membres...`);
+	};
+
+});
+
+/*-----------------------------------*/
+
 commands.addCategoryName("Commandes d'information");
 
 // get information about yourself
@@ -94,7 +160,7 @@ commands.addCommand("moi", "Obtenir des informations sur vous.", (requirements) 
 
 	let ms = message.guild.members.cache.find(member => member.id).joinedTimestamp;
 
-	message.reply(`Voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}\n\`\`\`Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${FormatDateFromMs(ms)}\`\`\``);
+	message.reply(`voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}\n\`\`\`Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${FormatDateFromMs(ms)}\`\`\``);
 
 });
 
@@ -104,7 +170,7 @@ commands.addCommand("serveur", "Obtenir des informations sur ce serveur.", (requ
 
 	let { message } = requirements;
 
-	message.reply(`Voici quelques informations à propos de **${message.guild.name}** ${RandomItem([":yum:", ":partying_face:"])}\n\`\`\`Nom du serveur: ${message.guild.name}\nNuméro d'identification: ${message.guild.id}\nNombre de membres: ${message.guild.memberCount}\nCréé le: ${FormatDateFromMs(message.guild.createdTimestamp)}\`\`\``);
+	message.reply(`voici quelques informations à propos de **${message.guild.name}** ${RandomItem([":yum:", ":partying_face:"])}\n\`\`\`Nom du serveur: ${message.guild.name}\nNuméro d'identification: ${message.guild.id}\nNombre de membres: ${message.guild.memberCount}\nCréé le: ${FormatDateFromMs(message.guild.createdTimestamp)}\`\`\``);
 
 });
 
@@ -117,9 +183,9 @@ commands.addCommand("avatar", "Obtenir l'avatar de la personne mentionnée en <a
 	// checks if there is a mention in the message
 
 	if (message.mentions.length === 0) {
-		message.reply(`Voici l'avatar de **${message.author.username}** ${RandomItem([":grin:", ":partying_face:"])}`, { files: [message.author.displayAvatarURL()] });
+		message.reply(`voici l'avatar de **${message.author.username}** ${RandomItem([":grin:", ":partying_face:"])}`, { files: [message.author.displayAvatarURL()] });
 	} else {
-		message.reply(`Voici l'avatar de **${message.mentions.members.first().user.username}** ${RandomItem([":grin:", ":partying_face:"])}`, { files: [message.mentions.members.first().user.displayAvatarURL()] });
+		message.reply(`voici l'avatar de **${message.mentions.members.first().user.username}** ${RandomItem([":grin:", ":partying_face:"])}`, { files: [message.mentions.members.first().user.displayAvatarURL()] });
 	};
 
 });
@@ -137,10 +203,10 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 	fetch(url)
 		.then(response => response.json())
 		.then(response => {
-			message.reply(`Voici la météo dans la ville de **${args.join(" ")}** :partying_face:\n\`\`\`Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${~~response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\nVitesse du vent: ${response.wind.speed}Km/h\nSens du vent: ${response.wind.deg}°\`\`\``);
+			message.reply(`voici la météo dans la ville de **${args.join(" ")}** :partying_face:\n\`\`\`Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${~~response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\nVitesse du vent: ${response.wind.speed}Km/h\nSens du vent: ${response.wind.deg}°\`\`\``);
 		})
 		.catch((err) => {
-			message.reply(`Oups, il y a eu un problème lors de la recherche de la météo :confounded:\nPeut-être que tu as mal écris le nom de la ville ou qu'elle n'existe pas.\n*Mais c'est peut-être moi qui n'ai pas fonctionné cette fois ci...*`);
+			message.reply(`oups, il y a eu un problème lors de la recherche de la météo :confounded:\nPeut-être que tu as mal écris le nom de la ville ou qu'elle n'existe pas.\n*Mais c'est peut-être moi qui n'ai pas fonctionné cette fois ci...*`);
 		});
 
 });
@@ -165,10 +231,16 @@ commands.addCommand("vraioufaux", "Vrai ou faux <argument>.", (requirements) => 
 
 	let { message, args, bot } = requirements;
 
-	message.reply(`**${message.author.username}**: ${args.join(" ") || "quelque chose"}\n**${bot.user.username}**: ${RandomItem(["Vrai", "Faux"])} !`);
+	message.reply(`**${message.author.username}**: ${args.join(" ") || "rien"}\n**${bot.user.username}**: ${RandomItem(["Vrai", "Faux"])} !`);
 
 });
 
+
+
+
+
+
+/*
 // "havest" -> gives you seeds
 
 commands.addCommand("recolter", "Récolter des graines du jardin.", (requirements) => {
@@ -260,6 +332,12 @@ commands.addCommand("acheter", "Montre les éléments du magasin, si un <argumen
 	};
 
 });
+*/
+
+
+
+
+
 
 /*-----------------------------------*/
 

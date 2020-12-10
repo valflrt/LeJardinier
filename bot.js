@@ -4,6 +4,7 @@ const commands = require("./commands");
 const settings = require("./config.json");
 const { RandomItem } = require("./utils/toolbox");
 const { db } = require("./db");
+const troll = require("./troll");
 require("colors");
 
 const bot = new Client();
@@ -64,11 +65,9 @@ bot.on("message", (message) => {
 
 	};
 
-	// anti "ok" (for fun) the same structure can be used as a swear word filter
+	// troll function
 
-	if (message.content.match(/^.*\s[oO][kK]\s.*$/g) !== null || message.content.match(/^[oO][kK]$/g) !== null) {
-		message.react("🤬");
-	};
+	troll.listen(message);
 
 });
 
