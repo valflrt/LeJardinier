@@ -26,7 +26,6 @@ commands.addCommand("inviter", "Inviter ce bot sur un autre serveur.", (requirem
 
 	let { message, bot } = requirements;
 
-
 	bot.generateInvite(['SEND_MESSAGES', 'MANAGE_GUILD', 'MENTION_EVERYONE'])
 		.then(link => {
 			message.reply(`Voici mon lien d'invitation ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])} :\n${link}\n*Mais attention, je suis en developpement...*`);
