@@ -33,6 +33,8 @@ bot.on("ready", () => {
 
 bot.on("message", (message) => {
 
+	message.reply = (str, files) => message.channel.send(`${message.author}\n${str}`, files || {});
+
 	// logs every message
 
 	console.log(`${(message.author.tag).blue.bold}: ${message.content}`);

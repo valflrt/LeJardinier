@@ -4,7 +4,7 @@ module.exports.listen = (message) => {
 
 	// anti "ok"(for fun) the same structure can be used as a swear word filter
 
-	if (message.content.match(/^.\s[oO][kK]\s.$|^[oO][kK]$/g) !== null) {
+	if (message.content.match(/((. )?)[oO][kK](( .)?)|^[oO][kK]$/g) !== null) {
 		message.react("🤬");
 	};
 
@@ -17,7 +17,7 @@ module.exports.listen = (message) => {
 	};
 
 	if (message.content.endsWith("quoi" || "quoi?" || "quoi ?")) {
-		message.channel.send("feur\n*Vas te coiffer tu me fait peur*");
+		message.channel.send("feur");
 	};
 
 	if (message.author.id === "564012236851511298") {
