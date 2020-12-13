@@ -79,7 +79,16 @@ bot.on("message", (message) => {
 
 	// update database
 
-	updateDB(message.guild.id, message.author.id);
+	updateDB(message.guild.id, message.author.id)
+		.then(user => {
+
+			// detect if the user leveled up
+
+			if (user.lvlUp === true) {
+				commands.execute("levelup", { message, user }, true); // "true" tells to execute even if it's an "hidden command"
+			};
+		})
+		.catch(err => console.log(err));
 
 	// troll function
 

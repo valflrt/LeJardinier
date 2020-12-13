@@ -3,10 +3,11 @@ const fetch = require("node-fetch");
 const settings = require("./config.json");
 const { Collection } = require("./utils/collection");
 const Message = require("./message");
+const { getStats } = require("./db");
 
 let commands = new Collection();
 
-/*-----------------------------------*/
+// help commands
 
 commands.addCategoryName("Commandes d'aide");
 
@@ -42,7 +43,7 @@ commands.addCommand("inviter", "Inviter ce bot sur un autre serveur.", (requirem
 
 });
 
-/*-----------------------------------*/
+// basical commands
 
 commands.addCategoryName("Commandes basiques");
 
@@ -108,7 +109,7 @@ commands.addCommand("joue", "Faire jouer le bot à <argument>.", (requirements) 
 
 });
 
-/*-----------------------------------*/
+// administration commands
 
 commands.addCategoryName("Commandes d'administration");
 
@@ -222,7 +223,7 @@ commands.addCommand("ban", "Banni le membre mentionné dans <argument1> et règl
 
 });
 
-/*-----------------------------------*/
+// information commands
 
 commands.addCategoryName("Commandes d'information");
 
@@ -232,12 +233,14 @@ commands.addCommand("moi", "Obtenir des informations sur vous.", (requirements) 
 
 	let { message } = requirements;
 
+	let stats = getStats(message.guild.id, message.author.id);
+
 	let ms = message.guild.members.cache.find(member => member.id).joinedTimestamp;
 
 	message.reply(
 		new Message()
-			.setMain(`voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}\n`)
-			.setDescription(`##Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${FormatDateFromMs(ms)}##`)
+			.setMain(`voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
+			.setDescription(`##XP: ${stats.xp}/${stats.lvlCost}\nLevel: ${stats.lvl}####Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${FormatDateFromMs(ms)}##`)
 			.end()
 	);
 
@@ -313,7 +316,7 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 
 });
 
-/*-----------------------------------*/
+// entertainement commands
 
 commands.addCategoryName("Commandes de divertissement");
 
@@ -345,7 +348,7 @@ commands.addCommand("vraioufaux", "Vrai ou faux <argument>.", (requirements) => 
 
 });
 
-/*-----------------------------------*/
+// action commands
 
 commands.addCategoryName("Commandes d'action");
 
@@ -364,5 +367,19 @@ commands.addCommand("regarder", "Regarder <argument>.", (requirements) => {
 	).then(() => message.channel.send(image));
 
 });
+
+// hidden commands
+
+commands.addHiddenCommand("levelup", (requirements) => {
+
+	let { message, user } = requirements;
+
+	message.reply(
+		new Message()
+			.setMain(`Tu es maintenant au niveau ${user.lvl} ${RandomItem([":partying_face:", ":thumbsup:"])}`)
+			.end()
+	);
+
+})
 
 module.exports = commands;

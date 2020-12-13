@@ -1,11 +1,12 @@
 // create a command
 
 class Command {
-	constructor(name, description, execution) {
+	constructor(name, description, execution, isHidden = false) {
 		this.name = name;
 		this.description = description;
 		this.execute = execution;
 		this.isCommand = true;
+		this.isHidden = isHidden;
 	};
 };
 
@@ -24,15 +25,32 @@ module.exports.Collection = class Collection {
 		this.commands.push({ name: name });
 	};
 
-	execute(name, args) {
-		if (this.commands.find(command => command.name === name)) {
-			this.commands.find(command => command.name === name).execute(args);
+	addHiddenCommand(name, execution) {
+		this.commands.push(new Command(name, null, execution, true));
+	};
+
+	execute(name, requirements, force = false) {
+
+		let command = this.commands.find(command => command.name === name) || null;
+
+		if (command !== null) {
+			if (command.isHidden === false && force !== false) {
+				command.execute(requirements);
+			} else {
+				command.execute(requirements);
+			};
 		};
 	};
 
 	exists(name) {
-		if (this.commands.find(command => command.name === name)) {
-			return true;
+		let command = this.commands.find(command => command.name === name) || null;
+
+		if (command !== null) {
+			if (command.isHidden === false) {
+				return true;
+			} else {
+				return false;
+			};
 		} else {
 			return false;
 		};
@@ -40,7 +58,13 @@ module.exports.Collection = class Collection {
 
 	toList() {
 		return this.commands.map(command => {
-			return (command.isCommand === true) ? `    [${command.name}] ${command.description}` : `\n - ${command.name}\n`;
+			if (command.isHidden) {
+				return "";
+			} else if (command.isCommand === true) {
+				return `    [${command.name}] ${command.description}`;
+			} else {
+				`\n - ${command.name}\n`
+			};
 		}).join("\n");
 	};
 };

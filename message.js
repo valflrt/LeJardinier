@@ -1,6 +1,6 @@
 module.exports = class Message {
 	setMain(str) {
-		str.replace(/^./, str[0].toUpperCase()); /* turns the first letter to a capital */
+		str.replace(/^[.]/, str[0].toUpperCase()); /* turns the first letter to a capital */
 		this.main = str;
 		return this;
 	};
