@@ -1,7 +1,7 @@
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync("./database.json");
-const db = low(adapter);
+const db = low(new FileSync("./database.json"));
+const config = require("./config.json");
 
 // default config for db
 
@@ -18,21 +18,22 @@ function updateDB(serverId, userId) {
 
 		let servers = db.get("servers");
 
-		if (!servers.find({ id: serverId })) {
+		if (servers.find({ id: serverId })) {
 			servers.push({ id: serverId, users: [] })
 				.write();
 		};
 
-		let users = db.get("servers")
-			.find({ id: serverId })
+		let users = servers.find({ id: serverId })
 			.get("users");
 
-		if (!users.find({ id: userId })) {
-			users.push({ id: userId, xp: 0, lvl: 0 })
+		console.log(db.value());
+
+		if (users.find({ id: userId })) {
+			users.push({ id: userId, xp: 0, lvl: 0, lvlCost: config })
 				.write();
 		};
 
-		updateXP()
+		updateXP(serverId, userId);
 
 	} catch (err) {
 

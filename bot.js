@@ -1,11 +1,20 @@
-const discord = require("discord.js");
-const { Client } = discord;
+/*
+entirely written by valflrt
+https://github.com/valflrt
+*/
+
+// required modules
+
+const { Client } = require("discord.js");
+require("colors");
+
+// local modules
+
 const commands = require("./commands");
-const settings = require("./config.json");
-const { RandomItem } = require("./utils/toolbox");
+const config = require("./config.json");
+const { token } = require("./token.json");
 const { db, updateDB } = require("./db");
 const troll = require("./troll");
-require("colors");
 
 const bot = new Client();
 
@@ -18,9 +27,9 @@ bot.on("ready", () => {
 
 	(async () => {
 		console.log("\033c");
-		await bot.user.setUsername(settings.username);
+		await bot.user.setUsername(config.username);
 		console.log(` ${"[+]".green} Username set`);
-		await bot.user.setPresence(settings.activity);
+		await bot.user.setPresence(config.activity);
 		console.log(` ${"[+]".green} Presence set`);
 		await db.write();
 		console.log(` ${"[+]".green} Database ready`);
@@ -53,9 +62,9 @@ bot.on("message", (message) => {
 
 	// detect command prfix and answer
 
-	if (message.content.startsWith(settings.prefix)) {
+	if (message.content.startsWith(config.prefix)) {
 
-		let content = message.content.replace(settings.prefix, "").split(" ");
+		let content = message.content.replace(config.prefix, "").split(" ");
 		let commandName = content.shift();
 		let args = content;
 
@@ -89,4 +98,4 @@ bot.on('guildMemberAdd', member => {
 
 // bot login
 
-bot.login(settings.token);
+bot.login(token);

@@ -1,0 +1,10 @@
+{
+	"username": "Le Jardinier",
+	"prefix": "!",
+	"activity": {
+		"activity": {
+			"name": "!help"
+		},
+		"status": "online"
+	}
+}
