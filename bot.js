@@ -67,6 +67,8 @@ bot.on("message", (message) => {
 
 	};
 
+	//
+
 	// troll function
 
 	troll.listen(message);
