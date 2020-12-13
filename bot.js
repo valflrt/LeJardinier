@@ -20,7 +20,7 @@ const bot = new Client();
 
 bot.on("ready", () => {
 
-	// verifications and console log
+	// verifications and console logging
 
 	console.log("\033c");
 	console.log("Loading...");
@@ -44,7 +44,7 @@ bot.on("message", (message) => {
 
 	message.reply = (str, files) => message.channel.send(`${message.author}\n${str}`, files || {});
 
-	// logs every message
+	// logs every message with its author's username
 
 	console.log(`${(message.author.tag).blue.bold}: ${message.content}`);
 
@@ -58,6 +58,7 @@ bot.on("message", (message) => {
 
 		message.channel.send("Désolé je ne fonctionne que dans les serveurs :confounded:");
 		return;
+
 	};
 
 	// detect command prfix and answer
