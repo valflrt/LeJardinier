@@ -10,28 +10,19 @@ db.defaults({ servers: [] })
 
 // management
 
-const addServer = (id) => {
+function updateDB(serverId, userId) {
 
 	// add a server to the server list in the db
 
 	try {
-		let servers = db.get("servers")
 
-		if (!servers.find({ id: id })) {
-			servers.push({ id: id, users: [] })
+		let servers = db.get("servers");
+
+		if (!servers.find({ id: serverId })) {
+			servers.push({ id: serverId, users: [] })
 				.write();
 		};
-	} catch (err) {
-		console.log(err);
-	};
 
-};
-
-const addMember = (serverId, userId) => {
-
-	// add an user to a server in the db
-
-	try {
 		let users = db.get("servers")
 			.find({ id: serverId })
 			.get("users");
@@ -40,17 +31,22 @@ const addMember = (serverId, userId) => {
 			users.push({ id: userId, xp: 0, lvl: 0 })
 				.write();
 		};
+
+		updateXP()
+
 	} catch (err) {
+
 		console.log(err);
+
 	};
 
 };
 
 // level management
 
-const updateXp = (serverId, userId) => {
+function updateXP(serverId, userId) {
 
-	// update the xp of one user
+	// update the an user's xp
 
 	try {
 		db.get("servers")
@@ -63,10 +59,9 @@ const updateXp = (serverId, userId) => {
 		console.log(err);
 	};
 
-
 };
 
-const getLvl = (serverId, userId) => {
+function getLvl(serverId, userId) {
 
 	// get lvl and xp from an user
 
@@ -84,4 +79,4 @@ const getLvl = (serverId, userId) => {
 
 // export functions
 
-module.exports = { db, addServer, addMember, updateXp, getLvl };
+module.exports = { db, updateDB, updateXP, getLvl };

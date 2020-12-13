@@ -3,7 +3,7 @@ const { Client } = discord;
 const commands = require("./commands");
 const settings = require("./config.json");
 const { RandomItem } = require("./utils/toolbox");
-const { db } = require("./db");
+const { db, updateDB } = require("./db");
 const troll = require("./troll");
 require("colors");
 
@@ -67,7 +67,9 @@ bot.on("message", (message) => {
 
 	};
 
-	//
+	// update database
+
+	updateDB(message.guild.id, message.author.id);
 
 	// troll function
 
