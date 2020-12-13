@@ -6,5 +6,6 @@
 			"name": "!help"
 		},
 		"status": "online"
-	}
+	},
+	"firstLvlCost": 10
 }
