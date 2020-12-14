@@ -260,61 +260,66 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 		const canvas = Canvas.createCanvas(700, 250);
 		const ctx = canvas.getContext('2d');
 
+		let basex = 200;
+
 		// display username
 
-		let fontSize = 60;
-
-		do { // make the familly smaller if it is out of the frame
-			ctx.font = `bold ${fontSize -= 10}px \"Whitney Book\"`;
-		} while (ctx.measureText(message.author.username).width > canvas.width - 300);
-
+		ctx.font = `bold 60px \"Whitney Book\"`;
 		ctx.fillStyle = "#ffffff";
-		ctx.fillText(message.author.username, 292, 110);
+		ctx.fillText(message.author.username, basex, 115);
 
 		// display level
 
-		ctx.font = "26px \"Whitney Book\"";
+		ctx.font = "bold 26px \"Whitney Book\"";
 		ctx.fillStyle = "#ffffff";
-		ctx.fillText(`LvL ${stats.lvl} | XP ${stats.xp}/${stats.lvlCost}`, 292, 145);
+		ctx.fillText(`LvL ${stats.lvl} | XP ${stats.xp}/${stats.lvlCost}`, basex, 150);
 
-		// display xp line bg
+		// main values to draw the line graph
+
+		let lineStart = 200;
+		let lineEnd = 500;
+		let lineTop = 165;
+		let lineMiddle = 170;
+		let lineBottom = 175;
+
+		// display xp line graph bg
 
 		ctx.beginPath();
 		ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-		ctx.lineTo(300, 160);
-		ctx.lineTo(570, 160)
-		ctx.arc(570, 165, 5, 0, Math.PI * 2, false);
-		ctx.lineTo(570, 170);
-		ctx.lineTo(300, 170);
-		ctx.arc(300, 165, 5, 0, Math.PI * 2, true);
+		ctx.lineTo(lineStart, lineTop);
+		ctx.lineTo(lineEnd, lineTop);
+		ctx.arc(lineEnd, lineMiddle, 5, 0, Math.PI * 2, false);
+		ctx.lineTo(lineEnd, lineBottom);
+		ctx.lineTo(lineStart, lineBottom);
+		ctx.arc(lineStart, lineMiddle, 5, 0, Math.PI * 2, true);
 		ctx.fill();
 		ctx.closePath();
 
-		// display xp line
+		// display xp line graph
 
-		let posx = (stats.xp / stats.lvlCost * 280) + 300; // there is 280px between the start and end of the line, and 300 between x = 0 and the start of the line
+		let xpEnd = (stats.xp / stats.lvlCost * 280) + lineStart; // there is 280px between the start and end of the line, and 300 between x = 0 and the start of the line
 
 		ctx.beginPath();
 		ctx.fillStyle = "#4CE821";
-		ctx.lineTo(300, 160);
-		ctx.lineTo(posx, 160)
-		ctx.arc(posx, 165, 5, 0, Math.PI * 2, false);
-		ctx.lineTo(posx, 170);
-		ctx.lineTo(300, 170);
-		ctx.arc(300, 165, 5, 0, Math.PI * 2, true);
+		ctx.lineTo(lineStart, lineTop);
+		ctx.lineTo(xpEnd, lineTop)
+		ctx.arc(xpEnd, lineMiddle, 5, 0, Math.PI * 2, false);
+		ctx.lineTo(xpEnd, lineBottom);
+		ctx.lineTo(lineStart, lineBottom);
+		ctx.arc(lineStart, lineMiddle, 5, 0, Math.PI * 2, true);
 		ctx.fill();
 		ctx.closePath();
 
 		// crop around avatar image
 
 		ctx.beginPath();
-		ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+		ctx.arc(125, 125, 50, 0, Math.PI * 2, true);
 		ctx.closePath();
 		ctx.clip();
 
 		const avatar = await Canvas.loadImage(message.author.displayAvatarURL({ format: 'jpg' }));
 
-		ctx.drawImage(avatar, 10, 10, 240, 240);
+		ctx.drawImage(avatar, 75, 75, 175, 175);
 
 		const attachment = new discord.MessageAttachment(canvas.toBuffer(), 'unknown.png');
 
