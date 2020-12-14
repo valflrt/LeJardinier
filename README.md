@@ -23,6 +23,7 @@ Install the dependencies using:
 	* [toolbox.js](./utils/toolbox.js): some functions to do some things.
 * [db.js](./db.js): database handler (lowdb: a local json database).
 * [message.js](./message.js): message constructor (look at [commands.js](./commands.js) to get an example).
+* [emotes.js](./emotes.js): random emote (success / fail).
 * [troll.js](./troll.js): simple message detection for fun (eg: when someone say ok the bot add an angry reaction).
 
 and voila !
