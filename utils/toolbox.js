@@ -1,17 +1,17 @@
 // random integer between min and max
 
-module.exports.RandomN = (min, max) => {
+module.exports.Random = (min, max) => {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-// random item
+// random array item
 
-module.exports.RandomItem = () => {
-	let random = Math.floor((Math.random() * arguments.length));
-	return arguments[random];
+module.exports.RandomItem = (items) => {
+	let random = Math.floor((Math.random() * items.length));
+	return items[random];
 };
 
-// random array item
+// turns ms into date
 
 module.exports.FormatDateFromMs = (ms) => {
 	let date = new Date(ms);
