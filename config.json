@@ -3,6 +3,6 @@
 	"prefix": "!",
 	"activityName": "!help",
 	"activityType": "PLAYING",
-	"firstLvlMaxXp": 20,
-	"lvlFactor": 1.2
+	"xpMaxDefault": 20,
+	"increasingFactor": 1.2
 }

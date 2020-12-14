@@ -280,18 +280,21 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 		ctx.fillStyle = "#ffffff";
 		ctx.font = "bold 28px \"Whitney Book\"";
 		ctx.fillText(`Level ${stats.lvl}`, basex, 149);
-		ctx.font = "bold 24px \"Whitney Book\"";
-		ctx.fillText(`${stats.xp}/${stats.xpMax}`, 515, 176);
 
 		// main values to draw the line graph
 
-		let lineStart = basex;
-		let lineEnd = basex + 300;
+		let lineStart = basex + 6;
+		let lineEnd = lineStart + 300;
 		let lineLength = Math.abs(lineStart - lineEnd)
 		let lineTop = 160;
 		let lineBottom = 176;
 		let lineMiddle = Math.round((lineTop + lineBottom) / 2);
 		let radius = Math.abs(lineTop - lineBottom) / 2;
+
+		// display xp
+
+		ctx.font = "bold 24px \"Whitney Book\"";
+		ctx.fillText(`${stats.xp}/${stats.xpMax}`, lineEnd + 20, 175);
 
 		// display xp line graph bg
 
@@ -324,13 +327,13 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 		// crop around avatar image
 
 		ctx.beginPath();
-		ctx.arc(105, 125, 50, 0, Math.PI * 2, true);
+		ctx.arc(115, 125, 50, 0, Math.PI * 2, true);
 		ctx.closePath();
 		ctx.clip();
 
 		const avatar = await Canvas.loadImage(message.author.displayAvatarURL({ format: 'jpg' }));
 
-		ctx.drawImage(avatar, 55, 75, 155, 175);
+		ctx.drawImage(avatar, 65, 75, 165, 175);
 
 		const attachment = new discord.MessageAttachment(canvas.toBuffer(), 'unknown.png');
 
