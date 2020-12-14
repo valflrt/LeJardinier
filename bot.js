@@ -47,9 +47,15 @@ bot.on("ready", () => {
 bot.on("message", async (message) => {
 
 	message.reply = (str, files) => {
-		let mention = (str.includes(`<@${message.author.id}>`) === false) ? `${message.author}\n` : "";
 
-		message.channel.send(`${mention}${str} `, files || {});
+		let mention;
+
+		if (str.includes(`<@${message.author.id}>`) === false) {
+			mention = `${message.author}\n`
+		};
+
+		message.channel.send(`${mention || ""}${str}`, files || {});
+
 	};
 
 	// logs every message with its author's username

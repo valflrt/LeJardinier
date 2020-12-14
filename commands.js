@@ -127,7 +127,7 @@ commands.addCommand("kick", "Kicker le membre mentionné dans <argument1> et rè
 
 			message.reply(
 				new Message()
-					.setMain(`tu n'as pas mentionné de membre (ou trop)... ça ne risque pas de marcher !`)
+					.setMain(`Tu n'as pas mentionné de membre (ou trop)... ça ne risque pas de marcher !`)
 					.end()
 			);
 
@@ -146,14 +146,14 @@ commands.addCommand("kick", "Kicker le membre mentionné dans <argument1> et rè
 						.then(() => {
 							message.reply(
 								new Message()
-									.setMain(`fait !\nJ'espère que tu sais ce que tu fais...`)
+									.setMain(`Fait !\nJ'espère que tu sais ce que tu fais...`)
 									.end()
 							);
 						})
 						.catch(() => {
 							message.reply(
 								new Message()
-									.setMain(`erreur !\nTu ne possède sûrrement pas la permission de kicker ce membre...`)
+									.setMain(`Erreur !\nCe membre n'est sûrrement pas kickable...`)
 									.end()
 							);
 						});
@@ -164,7 +164,7 @@ commands.addCommand("kick", "Kicker le membre mentionné dans <argument1> et rè
 	} else {
 		message.reply(
 			new Message()
-				.setMain(`tu ne possède pas la permission de kicker des membres...`)
+				.setMain(`Tu ne possède pas la permission de kicker des membres...`)
 				.end()
 		);
 	};
@@ -183,7 +183,7 @@ commands.addCommand("ban", "Banni le membre mentionné dans <argument1> et règl
 
 			message.reply(
 				new Message()
-					.setMain(`tu n'as pas mentionné de membre (ou trop)... ça ne risque pas de marcher !`)
+					.setMain(`Tu n'as pas mentionné de membre (ou trop)... ça ne risque pas de marcher !`)
 					.end()
 			);
 
@@ -201,14 +201,14 @@ commands.addCommand("ban", "Banni le membre mentionné dans <argument1> et règl
 					message.guild.members.cache.get(toBan.id).ban();
 					message.reply(
 						new Message()
-							.setMain(`fait !\nJ'espère que tu sais ce que tu fais...`)
+							.setMain(`Fait !\nJ'espère que tu sais ce que tu fais...`)
 							.end()
 					);
 				})
 				.catch(err => {
 					message.reply(
 						new Message()
-							.setMain(`erreur !\nTu ne possède sûrrement pas la permission de bannir ce membre...`)
+							.setMain(`Erreur !\nCe membre ne doit sûrrement pas pouvoir être banni...`)
 							.end()
 					);
 				});
@@ -218,7 +218,7 @@ commands.addCommand("ban", "Banni le membre mentionné dans <argument1> et règl
 	} else {
 		message.reply(
 			new Message()
-				.setMain(`tu ne possède pas la permission de kicker des membres...`)
+				.setMain(`Tu ne possède pas la permission de kicker des membres...`)
 				.end()
 		);
 	};
@@ -320,7 +320,7 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 
 		message.reply(
 			new Message()
-				.setMain(`voici quelques informations à propos de ${message.author} ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
+				.setMain(`Voici ton profil ${message.author} ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
 				.end()
 			, attachment
 		);
@@ -337,7 +337,7 @@ commands.addCommand("serveur", "Obtenir des informations sur ce serveur.", (requ
 
 	message.reply(
 		new Message()
-			.setMain(`voici quelques informations à propos de **${message.guild.name}** ${RandomItem([":yum:", ":partying_face:"])}\n`)
+			.setMain(`Voici le profil de **${message.guild}** ${RandomItem([":yum:", ":partying_face:"])}\n`)
 			.setDescription(`##Nom du serveur: ${message.guild.name}\nNuméro d'identification: ${message.guild.id}\nNombre de membres: ${message.guild.memberCount}\nCréé le: ${FormatDateFromMs(message.guild.createdTimestamp)}##`)
 			.end()
 	);
@@ -355,7 +355,7 @@ commands.addCommand("pdp", "Obtenir la photo de profil de la personne mentionné
 	if (!message.mentions.users.first()) {
 		message.reply(
 			new Message()
-				.setMain(`voici la photo de profil de ${message.author} ${RandomItem([":grin:", ":partying_face:"])}`)
+				.setMain(`Voici la photo de profil de ${message.author} ${RandomItem([":grin:", ":partying_face:"])}`)
 				.end(),
 			{ files: [message.author.displayAvatarURL()] }
 		);
@@ -384,7 +384,7 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 		.then(response => {
 			message.reply(
 				new Message()
-					.setMain(`voici la météo dans la ville de **${response.name}** :partying_face:`)
+					.setMain(`Voici la météo dans la ville de **${response.name}** :partying_face:`)
 					.setDescription(`##Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${~~response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\nVitesse du vent: ${response.wind.speed}Km/h\nSens du vent: ${response.wind.deg}°##`)
 					.end()
 			);
@@ -392,7 +392,7 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 		.catch((err) => {
 			message.reply(
 				new Message()
-					.setMain(`oups, il y a eu un problème lors de la recherche de la météo :confounded:\nPeut-être que tu as mal écris le nom de la ville ou qu'elle n'existe pas.\n*Mais c'est peut-être moi qui n'ai pas fonctionné cette fois ci...*`)
+					.setMain(`Oups, il y a eu un problème lors de la recherche de la météo :confounded:\nSoit tu as mal écrit sois la ville n'existe pas...\n*Mais il y a peut être eu un bug...*`)
 					.end()
 			);
 		});
@@ -463,6 +463,6 @@ commands.addHiddenCommand("levelup", (requirements) => {
 			.end()
 	);
 
-})
+});
 
 module.exports = commands;
