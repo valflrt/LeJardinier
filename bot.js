@@ -40,7 +40,7 @@ bot.on("ready", () => {
 
 });
 
-bot.on("message", (message) => {
+bot.on("message", async (message) => {
 
 	message.reply = (str, files) => message.channel.send(`${message.author}\n${str}`, files || {});
 
@@ -79,7 +79,7 @@ bot.on("message", (message) => {
 
 	// update database
 
-	updateDB(message.guild.id, message.author.id)
+	await updateDB(message.guild.id, message.author.id)
 		.then(user => {
 
 			// detect if the user leveled up
@@ -93,6 +93,10 @@ bot.on("message", (message) => {
 	// troll function
 
 	troll.listen(message);
+
+	if (message.content === "testimage") {
+		require("./image")(message);
+	};
 
 });
 

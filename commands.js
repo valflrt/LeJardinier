@@ -1,10 +1,12 @@
-const { Random, RandomItem, FormatDateFromMs } = require("./utils/toolbox");
+const Canvas = require("canvas");
 const fetch = require("node-fetch");
+const discord = require("discord.js");
+
+const { Random, RandomItem, FormatDateFromMs } = require("./utils/toolbox");
 const settings = require("./config.json");
 const { Collection } = require("./utils/collection");
 const Message = require("./message");
 const { getStats } = require("./db");
-
 let commands = new Collection();
 
 // help commands
@@ -243,6 +245,86 @@ commands.addCommand("moi", "Obtenir des informations sur vous.", (requirements) 
 			.setDescription(`##XP: ${stats.xp}/${stats.lvlCost}\nLevel: ${stats.lvl}####Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${FormatDateFromMs(ms)}##`)
 			.end()
 	);
+
+});
+
+// get your profile
+
+commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
+
+	let { message } = requirements;
+
+	let stats = getStats(message.guild.id, message.author.id);
+
+	let ms = message.guild.members.cache.find(member => member.id).joinedTimestamp;
+
+	(async () => {
+		const canvas = Canvas.createCanvas(600, 300);
+		const ctx = canvas.getContext('2d');
+
+		// display username
+
+		do { // make the familly smaller if it is out of the frame
+			ctx.font = `${fontSize -= 10}px \"Montserrat ExtraBold\"`;
+		} while (ctx.measureText(message.author.username).width > canvas.width - 300);
+
+		ctx.fillStyle = "#ffffff";
+		ctx.fillText(message.author.username, 292, 100);
+
+		// display level
+
+		ctx.font = "20px \"Montserrat SemiBold\"";
+		ctx.fillStyle = "#ffffff";
+		ctx.fillText(`LvL ${stats.lvl} | XP ${stats.xp}/${stats.lvlCost}`, 292, 135);
+
+		// display xp line bg
+
+		ctx.beginPath();
+		ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+		ctx.lineTo(300, 150);
+		ctx.lineTo(570, 150)
+		ctx.arc(570, 155, 5, 0, Math.PI * 2, false);
+		ctx.lineTo(570, 160);
+		ctx.lineTo(300, 160);
+		ctx.arc(300, 155, 5, 0, Math.PI * 2, true);
+		ctx.fill();
+		ctx.closePath();
+
+		// display xp line
+
+		let posx = (stats.xp / stats.lvlCost * 280) + 300; // there is 280px between the start and end of the line, and 300 between x = 0 and the start of the line
+
+		ctx.beginPath();
+		ctx.fillStyle = "#4CE821";
+		ctx.lineTo(300, 150);
+		ctx.lineTo(posx, 150)
+		ctx.arc(posx, 155, 5, 0, Math.PI * 2, false);
+		ctx.lineTo(posx, 160);
+		ctx.lineTo(300, 160);
+		ctx.arc(300, 155, 5, 0, Math.PI * 2, true);
+		ctx.fill();
+		ctx.closePath();
+
+		// crop around avatar image
+
+		ctx.beginPath();
+		ctx.arc(150, 150, 125, 0, Math.PI * 2, true);
+		ctx.closePath();
+		ctx.clip();
+
+		const avatar = await Canvas.loadImage(message.author.displayAvatarURL({ format: 'jpg' }));
+
+		ctx.drawImage(avatar, 10, 10, 290, 290);
+
+		const attachment = new discord.MessageAttachment(canvas.toBuffer(), 'unknown.png');
+
+		message.reply(
+			new Message()
+				.setMain(`voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
+				.end()
+			, attachment
+		);
+	})();
 
 });
 
