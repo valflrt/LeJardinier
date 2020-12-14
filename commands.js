@@ -257,7 +257,7 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 	let stats = getStats(message.guild.id, message.author.id);
 
 	(async () => {
-		const canvas = Canvas.createCanvas(600, 300);
+		const canvas = Canvas.createCanvas(700, 250);
 		const ctx = canvas.getContext('2d');
 
 		// display username
@@ -265,28 +265,28 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 		let fontSize = 60;
 
 		do { // make the familly smaller if it is out of the frame
-			ctx.font = `${fontSize -= 10}px \"Montserrat ExtraBold\"`;
+			ctx.font = `bold ${fontSize -= 10}px \"Whitney Book\"`;
 		} while (ctx.measureText(message.author.username).width > canvas.width - 300);
 
 		ctx.fillStyle = "#ffffff";
-		ctx.fillText(message.author.username, 292, 100);
+		ctx.fillText(message.author.username, 292, 110);
 
 		// display level
 
-		ctx.font = "20px \"Montserrat SemiBold\"";
+		ctx.font = "26px \"Whitney Book\"";
 		ctx.fillStyle = "#ffffff";
-		ctx.fillText(`LvL ${stats.lvl} | XP ${stats.xp}/${stats.lvlCost}`, 292, 135);
+		ctx.fillText(`LvL ${stats.lvl} | XP ${stats.xp}/${stats.lvlCost}`, 292, 145);
 
 		// display xp line bg
 
 		ctx.beginPath();
 		ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-		ctx.lineTo(300, 150);
-		ctx.lineTo(570, 150)
-		ctx.arc(570, 155, 5, 0, Math.PI * 2, false);
-		ctx.lineTo(570, 160);
 		ctx.lineTo(300, 160);
-		ctx.arc(300, 155, 5, 0, Math.PI * 2, true);
+		ctx.lineTo(570, 160)
+		ctx.arc(570, 165, 5, 0, Math.PI * 2, false);
+		ctx.lineTo(570, 170);
+		ctx.lineTo(300, 170);
+		ctx.arc(300, 165, 5, 0, Math.PI * 2, true);
 		ctx.fill();
 		ctx.closePath();
 
@@ -296,25 +296,25 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 
 		ctx.beginPath();
 		ctx.fillStyle = "#4CE821";
-		ctx.lineTo(300, 150);
-		ctx.lineTo(posx, 150)
-		ctx.arc(posx, 155, 5, 0, Math.PI * 2, false);
-		ctx.lineTo(posx, 160);
 		ctx.lineTo(300, 160);
-		ctx.arc(300, 155, 5, 0, Math.PI * 2, true);
+		ctx.lineTo(posx, 160)
+		ctx.arc(posx, 165, 5, 0, Math.PI * 2, false);
+		ctx.lineTo(posx, 170);
+		ctx.lineTo(300, 170);
+		ctx.arc(300, 165, 5, 0, Math.PI * 2, true);
 		ctx.fill();
 		ctx.closePath();
 
 		// crop around avatar image
 
 		ctx.beginPath();
-		ctx.arc(150, 150, 125, 0, Math.PI * 2, true);
+		ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
 		ctx.closePath();
 		ctx.clip();
 
 		const avatar = await Canvas.loadImage(message.author.displayAvatarURL({ format: 'jpg' }));
 
-		ctx.drawImage(avatar, 10, 10, 290, 290);
+		ctx.drawImage(avatar, 10, 10, 240, 240);
 
 		const attachment = new discord.MessageAttachment(canvas.toBuffer(), 'unknown.png');
 

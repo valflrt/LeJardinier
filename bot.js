@@ -61,7 +61,20 @@ bot.on("message", async (message) => {
 
 	};
 
-	// detect command prfix and answer
+	// update database
+
+	await updateDB(message.guild.id, message.author.id)
+		.then(user => {
+
+			// detect if the user leveled up
+
+			if (user.lvlUp === true) {
+				commands.execute("levelup", { message, user }, true); // "true" tells to execute even if it's an "hidden command"
+			};
+		})
+		.catch(err => console.log(err));
+
+	// detect prefix and command and execute the command
 
 	if (message.content.startsWith(config.prefix)) {
 
@@ -76,19 +89,6 @@ bot.on("message", async (message) => {
 		};
 
 	};
-
-	// update database
-
-	await updateDB(message.guild.id, message.author.id)
-		.then(user => {
-
-			// detect if the user leveled up
-
-			if (user.lvlUp === true) {
-				commands.execute("levelup", { message, user }, true); // "true" tells to execute even if it's an "hidden command"
-			};
-		})
-		.catch(err => console.log(err));
 
 	// troll function
 
