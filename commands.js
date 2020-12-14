@@ -256,13 +256,13 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 
 	let stats = getStats(message.guild.id, message.author.id);
 
-	let ms = message.guild.members.cache.find(member => member.id).joinedTimestamp;
-
 	(async () => {
 		const canvas = Canvas.createCanvas(600, 300);
 		const ctx = canvas.getContext('2d');
 
 		// display username
+
+		let fontSize = 60;
 
 		do { // make the familly smaller if it is out of the frame
 			ctx.font = `${fontSize -= 10}px \"Montserrat ExtraBold\"`;
