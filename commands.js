@@ -21,7 +21,7 @@ commands.addCommand("help", "Donne la liste des commandes disponibles.", (requir
 
 	message.reply(
 		new Message()
-			.setMain(`Voici une liste des commandes disponibles ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}`)
+			.setMain(`Voici une liste des commandes disponibles ${RandomItem(":grin:", ":partying_face:", ":thumbsup:")}`)
 			.setDescription(`##${commands.toList()}##`)
 			.end()
 	);
@@ -38,7 +38,7 @@ commands.addCommand("inviter", "Inviter ce bot sur un autre serveur.", (requirem
 		.then(link => {
 			message.reply(
 				new Message()
-					.setMain(`Voici mon lien d'invitation ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])} :\n${link}\n*Mais attention, je suis en developpement...*`)
+					.setMain(`Voici mon lien d'invitation ${RandomItem(":grin:", ":partying_face:", ":thumbsup:")} :\n${link}\n*Mais attention, je suis en developpement...*`)
 					.end()
 			);
 		});
@@ -71,7 +71,7 @@ commands.addCommand("hey", "Dire bonjour au bot.", (requirements) => {
 
 	message.reply(
 		new Message()
-			.setMain(`${RandomItem(["Salut", "Coucou", "Hey"])} **${message.author.username}** ! ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}`)
+			.setMain(`${RandomItem("Salut", "Coucou", "Hey")} **${message.author.username}** ! ${RandomItem(":grin:", ":partying_face:", ":thumbsup:")}`)
 			.end()
 	);
 
@@ -99,7 +99,7 @@ commands.addCommand("joue", "Faire jouer le bot à <argument>.", (requirements) 
 
 	message.reply(
 		new Message()
-			.setMain(`Comme tu veux ${RandomItem([":ok_hand:", ":thumbsup:"])}`)
+			.setMain(`Comme tu veux ${RandomItem(":ok_hand:", ":thumbsup:")}`)
 			.end()
 	);
 
@@ -241,7 +241,7 @@ commands.addCommand("moi", "Obtenir des informations sur vous.", (requirements) 
 
 	message.reply(
 		new Message()
-			.setMain(`voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
+			.setMain(`voici quelques informations à propos de **${message.author.username}** ${RandomItem(":yum:", ":partying_face:", ":thumbsup:")}`)
 			.setDescription(`##XP: ${stats.xp}/${stats.lvlCost}\nLevel: ${stats.lvl}####Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${FormatDateFromMs(ms)}##`)
 			.end()
 	);
@@ -336,7 +336,7 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 
 		message.reply(
 			new Message()
-				.setMain(`voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
+				.setMain(`voici quelques informations à propos de **${message.author.username}** ${RandomItem(":yum:", ":partying_face:", ":thumbsup:")}`)
 				.end()
 			, attachment
 		);
@@ -352,7 +352,7 @@ commands.addCommand("serveur", "Obtenir des informations sur ce serveur.", (requ
 
 	message.reply(
 		new Message()
-			.setMain(`voici quelques informations à propos de **${message.guild.name}** ${RandomItem([":yum:", ":partying_face:"])}\n`)
+			.setMain(`voici quelques informations à propos de **${message.guild.name}** ${RandomItem(":yum:", ":partying_face:")}\n`)
 			.setDescription(`##Nom du serveur: ${message.guild.name}\nNuméro d'identification: ${message.guild.id}\nNombre de membres: ${message.guild.memberCount}\nCréé le: ${FormatDateFromMs(message.guild.createdTimestamp)}##`)
 			.end()
 	);
@@ -370,13 +370,13 @@ commands.addCommand("avatar", "Obtenir l'avatar de la personne mentionnée en <a
 	if (!message.mentions.users.first()) {
 		message.reply(
 			new Message()
-				.setMain(`voici l'avatar de **${message.author.username}** ${RandomItem([":grin:", ":partying_face:"])}`)
+				.setMain(`voici l'avatar de **${message.author.username}** ${RandomItem(":grin:", ":partying_face:")}`)
 				.end(),
 			{ files: [message.author.displayAvatarURL()] }
 		);
 	} else {
 		message.reply(
-			`voici l'avatar de **${message.mentions.users.first().user.username}** ${RandomItem([":grin:", ":partying_face:"])}`
+			`voici l'avatar de **${message.mentions.users.first().user.username}** ${RandomItem(":grin:", ":partying_face:")}`
 			,
 			{ files: [message.mentions.users.first().user.displayAvatarURL()] }
 		);
@@ -440,7 +440,7 @@ commands.addCommand("vraioufaux", "Vrai ou faux <argument>.", (requirements) => 
 
 	message.reply(
 		new Message()
-			.setMain(`** ${message.author.username} **: ${args.join(" ") || "rien"}\n ** ${bot.user.username} **: ${RandomItem(["vrai", "faux"])} !`)
+			.setMain(`** ${message.author.username} **: ${args.join(" ") || "rien"}\n ** ${bot.user.username} **: ${RandomItem("vrai", "faux")} !`)
 			.end()
 	);
 
@@ -456,7 +456,7 @@ commands.addCommand("regarder", "Regarder <argument>.", (requirements) => {
 
 	let { message } = requirements;
 
-	let image = RandomItem(["https://tenor.com/view/pissed-stare-gif-12898273", "https://tenor.com/view/seriously-side-eye-confused-gif-8776030"]);
+	let image = RandomItem("https://tenor.com/view/pissed-stare-gif-12898273", "https://tenor.com/view/seriously-side-eye-confused-gif-8776030");
 
 	message.reply(
 		new Message()
@@ -474,7 +474,7 @@ commands.addHiddenCommand("levelup", (requirements) => {
 
 	message.reply(
 		new Message()
-			.setMain(`Tu es maintenant au niveau ${user.lvl} ${RandomItem([":partying_face:", ":thumbsup:"])}`)
+			.setMain(`Tu es maintenant au niveau ${user.lvl} ${RandomItem(":partying_face:", ":thumbsup:")}`)
 			.end()
 	);
 
