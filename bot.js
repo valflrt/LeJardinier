@@ -26,7 +26,8 @@ bot.on("ready", () => {
 	console.log("Loading...");
 
 	(async () => {
-		console.log("\033c");
+		console.log("\033c"); // clear console
+
 		await bot.user.setUsername(config.username);
 		console.log(` ${"[+]".green} Username set`);
 
@@ -102,10 +103,6 @@ bot.on("message", async (message) => {
 	// troll function
 
 	troll.listen(message);
-
-	if (message.content === "testimage") {
-		require("./image")(message);
-	};
 
 });
 
