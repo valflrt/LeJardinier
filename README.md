@@ -9,14 +9,9 @@ Install the dependencies using:
 
 ## Config and token
 
-* [config.json](./config.json): the config file.
-* [token.json](./token.example.json): the token source:
-```json
-{
-	"token": "your token goes here"
-}
-```
-* [bot.js](./bot.js): the main file.
+* [config.json](./config.json): config file.
+* [token.json](./token.example.json): bot's token.
+* [bot.js](./bot.js): main file.
 * [commands.js](./commands.js): commands.
 * [utils/](./utils/)
 	* [collection.js](./utils/collection.js): make a command collection and "format" them.
