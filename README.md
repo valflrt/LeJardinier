@@ -12,14 +12,13 @@ Install the dependencies using:
 [config.json](./config.json) is the config file:
 ```json
 {
-	"username": "Le Jardinier", // here is the username,
-	"prefix": "!", // the command prefix
-	"activity": { // this is already formatted for antering it as argument in bot.setPresence()
-		"activity": {
-			"name": "!help" // just put the game name you want your bot to play
-		},
-		"status": "online" // and here you can set the status
-	}
+	"username": "Le Jardinier", ``````
+	"prefix": "!",
+	"activity": {
+		"name": "!help",
+		"status": "online"
+	},
+	"firstLvlCost": 20
 }
 ```
 

@@ -1,7 +1,7 @@
-/*
-entirely written by valflrt
-https://github.com/valflrt
-*/
+/**
+ * entirely written by valflrt
+ * https://github.com/valflrt
+ */
 
 // required modules
 
@@ -29,8 +29,15 @@ bot.on("ready", () => {
 		console.log("\033c");
 		await bot.user.setUsername(config.username);
 		console.log(` ${"[+]".green} Username set`);
-		await bot.user.setPresence(config.activity);
+
+		await bot.user.setPresence({
+			activity: {
+				name: config.activity.name
+			},
+			status: config.activity.status
+		});
 		console.log(` ${"[+]".green} Presence set`);
+
 		await db.write();
 		console.log(` ${"[+]".green} Database ready`);
 

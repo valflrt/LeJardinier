@@ -2,9 +2,7 @@
 	"username": "Le Jardinier",
 	"prefix": "!",
 	"activity": {
-		"activity": {
-			"name": "!help"
-		},
+		"name": "!help",
 		"status": "online"
 	},
 	"firstLvlCost": 20
