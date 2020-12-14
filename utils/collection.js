@@ -22,7 +22,7 @@ module.exports.Collection = class Collection {
 	};
 
 	addCategoryName(name) {
-		this.commands.push({ name: name });
+		this.commands.push({ name: name, isCommand: false });
 	};
 
 	addHiddenCommand(name, execution) {
@@ -60,10 +60,10 @@ module.exports.Collection = class Collection {
 		return this.commands.map(command => {
 			if (command.isHidden) {
 				return "";
-			} else if (command.isCommand === true) {
-				return `    [${command.name}] ${command.description}`;
+			} else if (command.isCommand === false) {
+				return `\n - ${command.name}\n`
 			} else {
-				`\n - ${command.name}\n`
+				return `    [${command.name}] ${command.description}`;
 			};
 		}).join("\n");
 	};
