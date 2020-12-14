@@ -12,7 +12,7 @@ Install the dependencies using:
 [config.json](./config.json) is the config file:
 ```json
 {
-	"username": "Le Jardinier", ``````
+	"username": "Le Jardinier",
 	"prefix": "!",
 	"activity": {
 		"name": "!help",
