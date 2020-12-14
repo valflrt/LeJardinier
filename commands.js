@@ -245,7 +245,7 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 		const canvas = Canvas.createCanvas(700, 250);
 		const ctx = canvas.getContext('2d');
 
-		let basex = 200;
+		let basex = 140;
 
 		// display username
 
@@ -312,13 +312,13 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 		// crop around avatar image
 
 		ctx.beginPath();
-		ctx.arc(115, 125, 50, 0, Math.PI * 2, true);
+		ctx.arc(60, 125, 50, 0, Math.PI * 2, true);
 		ctx.closePath();
 		ctx.clip();
 
 		const avatar = await Canvas.loadImage(message.author.displayAvatarURL({ format: 'jpg' }));
 
-		ctx.drawImage(avatar, 65, 75, 165, 175);
+		ctx.drawImage(avatar, 10, 75, 110, 175);
 
 		const attachment = new discord.MessageAttachment(canvas.toBuffer(), 'unknown.png');
 
