@@ -7,19 +7,25 @@ A simple and fast discord bot (french language only).
 Install the dependencies using:
 ```npm install```
 
-## config
+## Config and token
 
-Here is an example of config.json:
+[config.json](./config.json) is the config file:
 ```json
 {
-	"token": "your token goes here",
-	"username": "Le Jardinier",
-	"prefix": "!",
-	"activity": {
+	"username": "Le Jardinier", // here is the username,
+	"prefix": "!", // the command prefix
+	"activity": { // this is already formatted for antering it as argument in bot.setPresence()
 		"activity": {
-			"name": "!help"
+			"name": "!help" // just put the game name you want your bot to play
 		},
-		"status": "online"
+		"status": "online" // and here you can set the status
 	}
+}
+```
+
+Your token must be in [token.json](./token.json):
+```json
+{
+	"token": "your token goes here"
 }
 ```

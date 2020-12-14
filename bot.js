@@ -82,8 +82,10 @@ bot.on("message", async (message) => {
 		let commandName = content.shift();
 		let args = content;
 
+		// check if the command exists and execute it
+
 		if (commands.exists(commandName) === true) {
-			commands.execute(commandName, { message, args, bot });
+			commands.execute(commandName, { message, args, bot }); // object allow you to pass custom variables (look at commands.js)
 		} else {
 			message.reply("Cette commande n'existe pas !");
 		};
