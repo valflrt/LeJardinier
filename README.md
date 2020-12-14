@@ -10,7 +10,7 @@ Install the dependencies using:
 ## Config and token
 
 * [config.json](./config.json): the config file.
-* [token.json](./token-example.json): the token source:
+* [token.json](./token.example.json): the token source:
 ```json
 {
 	"token": "your token goes here"
