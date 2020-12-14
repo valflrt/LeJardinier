@@ -3,10 +3,14 @@ const fetch = require("node-fetch");
 const discord = require("discord.js");
 
 const { Random, RandomItem, FormatDateFromMs } = require("./utils/toolbox");
-const settings = require("./config.json");
 const { Collection } = require("./utils/collection");
-const Message = require("./message");
 const { getStats } = require("./db");
+const settings = require("./config.json");
+const Message = require("./message");
+const emotes = require("./emotes");
+
+// create command collection
+
 let commands = new Collection();
 
 // help commands
@@ -30,7 +34,7 @@ commands.addCommand("help", "Donne la liste des commandes disponibles.", (requir
 
 // gives a link to invite this bot to one of your guild
 
-commands.addCommand("inviter", "Inviter ce bot sur un autre serveur.", (requirements) => {
+commands.addCommand("invitation", "Inviter ce bot sur un autre serveur.", (requirements) => {
 
 	let { message, bot } = requirements;
 
@@ -38,7 +42,7 @@ commands.addCommand("inviter", "Inviter ce bot sur un autre serveur.", (requirem
 		.then(link => {
 			message.reply(
 				new Message()
-					.setMain(`Voici mon lien d'invitation ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])} :\n${link}\n*Mais attention, je suis en developpement...*`)
+					.setMain(`Voici mon lien d'invitation ${emotes.success()}\n*Mais attention, je suis en developpement...*\n${link}`)
 					.end()
 			);
 		});
@@ -71,7 +75,7 @@ commands.addCommand("hey", "Dire bonjour au bot.", (requirements) => {
 
 	message.reply(
 		new Message()
-			.setMain(`${RandomItem(["Salut", "Coucou", "Hey"])} ${message.author} ! ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}`)
+			.setMain(`${RandomItem(["Salut", "Coucou", "Hey"])} ${message.author} ! ${emotes.success()}`)
 			.end()
 	);
 
@@ -99,7 +103,7 @@ commands.addCommand("joue", "Faire jouer le bot à <argument>.", (requirements) 
 
 	message.reply(
 		new Message()
-			.setMain(`Comme tu veux ${RandomItem([":ok_hand:", ":thumbsup:"])}`)
+			.setMain(`Comme tu veux ${emotes.success()}`)
 			.end()
 	);
 
@@ -320,7 +324,7 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 
 		message.reply(
 			new Message()
-				.setMain(`Voici ton profil ${message.author} ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
+				.setMain(`Voici ton profil ${message.author} ${emotes.success()}`)
 				.end()
 			, attachment
 		);
@@ -337,7 +341,7 @@ commands.addCommand("serveur", "Obtenir des informations sur ce serveur.", (requ
 
 	message.reply(
 		new Message()
-			.setMain(`Voici le profil de **${message.guild}** ${RandomItem([":yum:", ":partying_face:"])}\n`)
+			.setMain(`Voici le profil de **${message.guild}** ${emotes.success()}`)
 			.setDescription(`##Nom du serveur: ${message.guild.name}\nNuméro d'identification: ${message.guild.id}\nNombre de membres: ${message.guild.memberCount}\nCréé le: ${FormatDateFromMs(message.guild.createdTimestamp)}##`)
 			.end()
 	);
@@ -355,13 +359,13 @@ commands.addCommand("pdp", "Obtenir la photo de profil de la personne mentionné
 	if (!message.mentions.users.first()) {
 		message.reply(
 			new Message()
-				.setMain(`Voici la photo de profil de ${message.author} ${RandomItem([":grin:", ":partying_face:"])}`)
+				.setMain(`Voici la photo de profil de ${message.author} ${emotes.success()}`)
 				.end(),
 			{ files: [message.author.displayAvatarURL()] }
 		);
 	} else {
 		message.reply(
-			`voici l'avatar de **${message.mentions.users.first().user.username}** ${RandomItem([":grin:", ":partying_face:"])}`
+			`voici l'avatar de **${message.mentions.users.first().user.username}** ${emotes.success()}`
 			,
 			{ files: [message.mentions.users.first().user.displayAvatarURL()] }
 		);
@@ -384,7 +388,7 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 		.then(response => {
 			message.reply(
 				new Message()
-					.setMain(`Voici la météo dans la ville de **${response.name}** :partying_face:`)
+					.setMain(`Voici la météo dans la ville de **${response.name}** ${emotes.success()}`)
 					.setDescription(`##Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${~~response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\nVitesse du vent: ${response.wind.speed}Km/h\nSens du vent: ${response.wind.deg}°##`)
 					.end()
 			);
@@ -392,7 +396,7 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 		.catch((err) => {
 			message.reply(
 				new Message()
-					.setMain(`Oups, il y a eu un problème lors de la recherche de la météo :confounded:\nSoit tu as mal écrit sois la ville n'existe pas...\n*Mais il y a peut être eu un bug...*`)
+					.setMain(`Oups, problème apparait ${emotes.fail()}\nSoit tu as mal écrit sois la ville n'existe pas...\n*Mais il y a peut être eu un bug...*`)
 					.end()
 			);
 		});
@@ -459,7 +463,7 @@ commands.addHiddenCommand("levelup", (requirements) => {
 
 	message.reply(
 		new Message()
-			.setMain(`Tu es maintenant au niveau ${user.lvl} ${RandomItem([":partying_face:", ":thumbsup:"])}`)
+			.setMain(`Bravo ${message.author}, tu es maintenant au niveau ${user.lvl} ${emotes.success()}`)
 			.end()
 	);
 
