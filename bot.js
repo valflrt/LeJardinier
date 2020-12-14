@@ -46,11 +46,15 @@ bot.on("ready", () => {
 
 bot.on("message", async (message) => {
 
-	message.reply = (str, files) => message.channel.send(`${message.author}\n${str}`, files || {});
+	message.reply = (str, files) => {
+		let mention = (str.includes(`<@${message.author.id}>`) === false) ? `${message.author}\n` : "";
+
+		message.channel.send(`${mention}${str} `, files || {});
+	};
 
 	// logs every message with its author's username
 
-	console.log(`${(message.author.tag).blue.bold}: ${message.content}`);
+	console.log(`${(message.author.tag).blue.bold}: ${message.content} `);
 
 	// skip if the message comes from the bot
 
@@ -105,7 +109,7 @@ bot.on("message", async (message) => {
 bot.on("guildMemberAdd", member => {
 	member.guild.channels.cache.find(channel => {
 		if (channel.name === "logs") {
-			channel.send(`Bienvenue ${member.user} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
+			channel.send(`Bienvenue ${member.user} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])} `);
 		};
 	});
 });

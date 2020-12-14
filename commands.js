@@ -71,7 +71,7 @@ commands.addCommand("hey", "Dire bonjour au bot.", (requirements) => {
 
 	message.reply(
 		new Message()
-			.setMain(`${RandomItem(["Salut", "Coucou", "Hey"])} **${message.author.username}** ! ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}`)
+			.setMain(`${RandomItem(["Salut", "Coucou", "Hey"])} ${message.author} ! ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}`)
 			.end()
 	);
 
@@ -229,25 +229,6 @@ commands.addCommand("ban", "Banni le membre mentionné dans <argument1> et règl
 
 commands.addCategoryName("Commandes d'information");
 
-// get information about yourself
-
-commands.addCommand("moi", "Obtenir des informations sur vous.", (requirements) => {
-
-	let { message } = requirements;
-
-	let stats = getStats(message.guild.id, message.author.id);
-
-	let ms = message.guild.members.cache.find(member => member.id).joinedTimestamp;
-
-	message.reply(
-		new Message()
-			.setMain(`voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
-			.setDescription(`##XP: ${stats.xp}/${stats.lvlCost}\nLevel: ${stats.lvl}####Nom d'utilisateur: ${message.author.username}\nNuméro d'identification: ${message.author.id}\nMembre depuis: ${FormatDateFromMs(ms)}##`)
-			.end()
-	);
-
-});
-
 // get your profile
 
 commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
@@ -339,10 +320,11 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 
 		message.reply(
 			new Message()
-				.setMain(`voici quelques informations à propos de **${message.author.username}** ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
+				.setMain(`voici quelques informations à propos de ${message.author} ${RandomItem([":yum:", ":partying_face:", ":thumbsup:"])}`)
 				.end()
 			, attachment
 		);
+
 	})();
 
 });
@@ -364,7 +346,7 @@ commands.addCommand("serveur", "Obtenir des informations sur ce serveur.", (requ
 
 // get somebody's avatar
 
-commands.addCommand("avatar", "Obtenir l'avatar de la personne mentionnée en <argument>.", (requirements) => {
+commands.addCommand("pdp", "Obtenir la photo de profil de la personne mentionnée en <argument>.", (requirements) => {
 
 	let { message } = requirements;
 
@@ -373,7 +355,7 @@ commands.addCommand("avatar", "Obtenir l'avatar de la personne mentionnée en <a
 	if (!message.mentions.users.first()) {
 		message.reply(
 			new Message()
-				.setMain(`voici l'avatar de **${message.author.username}** ${RandomItem([":grin:", ":partying_face:"])}`)
+				.setMain(`voici la photo de profil de ${message.author} ${RandomItem([":grin:", ":partying_face:"])}`)
 				.end(),
 			{ files: [message.author.displayAvatarURL()] }
 		);
@@ -429,7 +411,7 @@ commands.addCommand("taux", "Taux aléatoire de <argument>.", (requirements) => 
 
 	message.reply(
 		new Message()
-			.setMain(`**${message.author.username}** a un taux de ${args.join(" ") || "quelque chose"} de ${Random(0, 100)}%...`)
+			.setMain(`${message.author} a un taux de ${args.join(" ") || "quelque chose"} de ${Random(0, 100)}%...`)
 			.end()
 	);
 
@@ -443,7 +425,7 @@ commands.addCommand("vraioufaux", "Vrai ou faux <argument>.", (requirements) => 
 
 	message.reply(
 		new Message()
-			.setMain(`** ${message.author.username} **: ${args.join(" ") || "rien"}\n ** ${bot.user.username} **: ${RandomItem(["vrai", "faux"])} !`)
+			.setMain(`${message.author}: ${args.join(" ") || "rien"}\n ** ${bot.user.username} **: ${RandomItem(["vrai", "faux"])} !`)
 			.end()
 	);
 
@@ -463,7 +445,7 @@ commands.addCommand("regarder", "Regarder <argument>.", (requirements) => {
 
 	message.reply(
 		new Message()
-			.setMain(`**${message.author.username}** regarde **${message.mentions.users.first()}** !`)
+			.setMain(`${message.author} regarde **${message.mentions.users.first()}** !`)
 			.end()
 	).then(() => message.channel.send(image));
 
