@@ -28,22 +28,18 @@ bot.on("ready", () => {
 	(async () => {
 		console.log("\033c"); // clear console
 
-		await bot.user.setUsername(config.username);
-		console.log(` ${"[+]".green} Username set`);
+		await bot.user.setUsername(config.username)
+			.then(username => console.log(` ${"[+]".green} Username set to ${username.username}`));
 
-		await bot.user.setPresence({
+		await bot.user.setPresence((config.activityName) ? {
 			activity: {
-				name: config.activity.name
-			},
-			status: config.activity.status
-		});
-		console.log(` ${"[+]".green} Presence set`);
+				name: config.activityName,
+				type: config.activityType || "PLAYING"
+			}
+		} : null).then(presence => console.log(` ${"[+]".green} Presence set to ${presence.activities.shift().name.cyan}`))
 
-		await db.write();
-		console.log(` ${"[+]".green} Database ready`);
-
-		console.log(` ${"[+]".green} Logged in as: ${(bot.user.tag).cyan} - (${(bot.user.id).cyan})\n`);
-		console.log(" " + " connected ".bgGreen.black + "\n");
+		console.log(` ${"[+]".green} Logged in as: ${(bot.user.tag).cyan} - (${(bot.user.id).cyan})`);
+		console.log("\n " + " connected ".bgGreen.black + "\n");
 	})();
 
 });
