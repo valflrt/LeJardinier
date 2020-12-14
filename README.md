@@ -9,22 +9,20 @@ Install the dependencies using:
 
 ## Config and token
 
-[config.json](./config.json) is the config file:
-```json
-{
-	"username": "Le Jardinier",
-	"prefix": "!",
-	"activity": {
-		"name": "!help",
-		"status": "online"
-	},
-	"firstLvlCost": 20
-}
-```
-
-Your token must be in [token.json](./token.json):
+* [config.json](./config.json): the config file.
+* [token.json](./token.json): the token source:
 ```json
 {
 	"token": "your token goes here"
 }
 ```
+* [bot.js](./bot.js): the main file.
+* [commands.js](./commands.js): commands.
+* [utils/](./utils/)
+	* [collection.js](./utils/collection.js): used to "format" commands.
+	* [toolbox.js](./utils/toolbox.js): some functions to some things.
+* [db.js](./db.js): database handler (lowdb: a local json database).
+* [message.js](./message.js): message constructor (look at [commands.js](./commands.js) to get an example).
+* [troll.js](./troll.js): simple message detection for fun (eg: when someone say ok the bot add an angry reaction).
+
+and voila !

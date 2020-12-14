@@ -94,8 +94,6 @@ bot.on("message", async (message) => {
 
 		if (commands.exists(commandName) === true) {
 			commands.execute(commandName, { message, args, bot }); // object allow you to pass custom variables (look at commands.js)
-		} else {
-			message.reply("Cette commande n'existe pas !");
 		};
 
 	};
@@ -108,9 +106,9 @@ bot.on("message", async (message) => {
 
 // sends message when there is a new guild member
 
-bot.on('guildMemberAdd', member => {
+bot.on("guildMemberAdd", member => {
 	member.guild.channels.cache.find(channel => {
-		if (channel.name == "logs") {
+		if (channel.name === "logs") {
 			channel.send(`Bienvenue ${member.user} ${RandomItem([":partying_face:", ":thumbsup:", ":grin:"])}`);
 		};
 	});

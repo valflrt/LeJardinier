@@ -1,7 +1,7 @@
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const db = low(new FileSync("./database.json"));
-const { firstLvlCost } = require("./config.json");
+const { firstLvlCost, lvlFactor } = require("./config.json");
 
 // default config for db
 
@@ -29,7 +29,7 @@ function updateDB(serverId, userId) {
 
 			if (!users.find({ id: userId }).value()) {
 
-				users.push({ id: userId, xp: 0, lvl: 0, lvlCost: firstLvlCost })
+				users.push({ id: userId, xp: 0, lvl: 0, xpMax: firstLvlMaxXp })
 					.write();
 			};
 
@@ -62,11 +62,11 @@ function updateXP(serverId, userId) {
 
 		let userValue = user.value();
 
-		if (userValue.xp === userValue.lvlCost) {
+		if (userValue.xp >= userValue.xpMax) {
 
 			user.set("xp", 0)
 				.update("lvl", lvl => lvl + 1)
-				.update("lvlCost", lvlCost => Math.round(lvlCost * 1.1))
+				.update("xpMax", xpMax => Math.round(xpMax * xpFactor))
 				.write();
 
 			return {
@@ -98,7 +98,7 @@ function getStats(serverId, userId) {
 		.find({ id: userId })
 		.value();
 
-	return { xp: user.xp, lvlCost: user.lvlCost, lvl: user.lvl };
+	return { xp: user.xp, xpMax: user.xpMax, lvl: user.lvl };
 
 };
 
