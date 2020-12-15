@@ -432,7 +432,7 @@ commands.addCommand("play", "Lire la musique.", async (requirements) => {
 	let play = (message, connection) => {
 
 		connection
-			.play(__dirname + "/music.mp3", { volume: 0.8 })
+			.play(__dirname + "/music.flac", { volume: 0.8 })
 			.on("finish", () => voiceChannel.leave())
 			.on("error", error => {
 				console.error(error);
