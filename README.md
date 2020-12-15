@@ -10,7 +10,7 @@ Install the dependencies using:
 ## Config and token
 
 * [config.json](./config.json): config file.
-* [token.json](./token.example.json): bot's token.
+* roken.json ([token.example.json](./token.example.json)): bot's token.
 * [bot.js](./bot.js): main file.
 * [commands.js](./commands.js): commands.
 * [utils/](./utils/)
