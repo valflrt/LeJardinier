@@ -430,10 +430,13 @@ commands.addCommand("ajouter", "Ajouter une musique à la liste.", async (requir
 	};
 
 	let url = `https://www.youtube.com/watch?v=${args[0]}`; // create the url
-	let info = await ytdl.getInfo(url).videoDetails; // get info about the song
+	let info = await ytdl.getInfo(url); // get info about the song
+	info = info.videoDetails
+
+	console.log(info);
 
 	try {
-		addSong({ url: url, info: info }); // add the song to the queue (in the database)
+		addSong(message.guild.id, { url: url, info: info }); // add the song to the queue (in the database)
 	} catch (err) {
 		console.log(err);
 	};
@@ -450,7 +453,7 @@ commands.addCommand("liste", "Montrer la liste des musiques.", async (requiremen
 
 	let { message } = requirements;
 
-	let songs = getSongs()
+	let songs = getSongs(message.guild.id)
 
 	// give the music list
 
@@ -458,7 +461,7 @@ commands.addCommand("liste", "Montrer la liste des musiques.", async (requiremen
 		message.reply(
 			new Message()
 				.setMain(`Voici les prochaines musiques ${emotes.success()}`)
-				.setDescription(`##${songs.map(song => `- ${song.info.title}\n    chaine: ${song.info}`).join("\n")}##`)
+				.setDescription(`##${songs.map(song => `- ${song.info.title}\n    Nom de la chaine: ${song.info.ownerChannelName}`).join("\n")}##`)
 				.end()
 		);
 	} else {
@@ -475,7 +478,7 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 
 	let { message } = requirements;
 
-	let songs = getSongs();
+	let songs = getSongs(message.guild.id);
 
 	// check if the user is in an audio channel
 
@@ -534,7 +537,7 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 						.end()
 				);
 			})
-			.on("finish", () => { shiftSong(); play(message, connection) }) // when the song is finished: remove it and play the next one
+			.on("finish", () => { shiftSong(message.guild.id); play(message, connection) }) // when the song is finished: remove it and play the next one
 			.on("error", error => { // if there is an error: console.log it and leave the audio channel
 				console.error(error);
 				return voiceChannel.leave();
