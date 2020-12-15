@@ -26,6 +26,7 @@ bot.on("ready", () => {
 	console.log("Loading...");
 
 	(async () => {
+
 		console.log("\033c"); // clear console
 
 		await bot.user.setUsername(config.username)
@@ -40,6 +41,7 @@ bot.on("ready", () => {
 
 		console.log(` ${"[+]".green} Logged in as: ${(bot.user.tag).cyan} - (${(bot.user.id).cyan})`);
 		console.log("\n " + " connected ".bgGreen.black + "\n");
+
 	})();
 
 });
@@ -92,7 +94,7 @@ bot.on("message", async (message) => {
 
 	if (message.content.startsWith(config.prefix)) {
 
-		let content = message.content.replace(config.prefix, "").split(" ");
+		let content = message.content.replace(config.prefix, "").split(" " || "  ");
 		let commandName = content.shift();
 		let args = content;
 

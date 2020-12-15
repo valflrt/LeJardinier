@@ -1,10 +1,12 @@
 const Canvas = require("canvas");
 const fetch = require("node-fetch");
 const discord = require("discord.js");
+const ytdl = require("ytdl-core");
 
 const { Random, RandomItem, FormatDateFromMs } = require("./utils/toolbox");
 const { Collection } = require("./utils/collection");
 const { getStats } = require("./db");
+const { Queue } = require("./queue");
 const settings = require("./config.json");
 const Message = require("./message");
 const emotes = require("./emotes");
@@ -407,7 +409,42 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 
 commands.addCategoryName("Musique");
 
-commands.addCommand("play", "Lire la musique.", async (requirements) => {
+const queue = new Queue();
+
+commands.addCommand("ajouter", "Ajouter une musique à la liste.", async (requirements) => {
+
+	let { message, args } = requirements;
+
+	if (!args[0]) {
+		return message.reply(
+			new Message()
+				.setMain("Cette commande utilise les \"codes\" youtube, exemple:")
+				.setDescription("\`https://www.youtube.com/watch?v=cette partie là\`")
+				.end()
+		);
+	} else if (args[0].match(/(.{11})/) === null) {
+		return message.reply(
+			new Message()
+				.setMain("Ce n'est pas un \"code\" youtube !")
+				.end()
+		);
+	};
+
+	let url = `https://www.youtube.com/watch?v=${args[0]}`;
+	let info = await ytdl.getInfo(url);
+
+	queue.add({ url: url, name: info.videoDetails.title });
+
+	message.reply(
+		new Message()
+			.setMain(`Musique ajoutée à la liste ${emotes.success()}`)
+			.setDescription(`Prochaines musiques:\n##${queue.content.map(song => `- ${song.name}`).join("\n")}##`)
+			.end()
+	);
+
+})
+
+commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (requirements) => {
 
 	let { message } = requirements;
 
@@ -429,21 +466,29 @@ commands.addCommand("play", "Lire la musique.", async (requirements) => {
 		);
 	};
 
+	if (queue.content.length === 0) {
+		return message.reply(
+			new Message()
+				.setMain("Il n'y a pas de musique dans la liste, ajoutes-en une avec \`!ajouter\`.")
+				.end()
+		);
+	};
+
 	let play = (message, connection) => {
 
-		connection
-			.play(__dirname + "/music.flac", { volume: 0.8 })
-			.on("finish", () => voiceChannel.leave())
+		connection.play(ytdl(queue.current().url, { filter: "audioonly" }), { volume: 0.8 })
+			.on("start", () => {
+				message.reply(
+					new Message()
+						.setMain(`Lecture de \`${queue.current().name}\` ${emotes.success()}`)
+						.end()
+				);
+			})
+			.on("finish", () => { queue.dequeue(); play(message, connection) })
 			.on("error", error => {
 				console.error(error);
 				return voiceChannel.leave();
 			});
-
-		message.reply(
-			new Message()
-				.setMain(`Lecture... ${emotes.success()}`)
-				.end()
-		);
 
 	};
 
