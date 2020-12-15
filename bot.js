@@ -1,5 +1,5 @@
 /**
- * entirely written by valflrt almost without copy-paste :)
+ * entirely written by valflrt almost without copy-paste ‎|•'-'•)و✧
  * https://github.com/valflrt
  */
 

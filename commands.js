@@ -433,10 +433,10 @@ commands.addCommand("play", "Lire la musique.", async (requirements) => {
 
 		connection
 			.play(__dirname + "/music.mp3", { volume: 0.8 })
-			.on("finish", () => connection.leave())
+			.on("finish", () => voiceChannel.leave())
 			.on("error", error => {
 				console.error(error);
-				return connection();
+				return voiceChannel.leave();
 			});
 
 		message.reply(
