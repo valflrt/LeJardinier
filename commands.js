@@ -403,6 +403,75 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 
 });
 
+// music commands
+
+commands.addCategoryName("Musique");
+
+commands.addCommand("play", "Lire la musique.", async (requirements) => {
+
+	let { message } = requirements;
+
+	let voiceChannel = message.member.voice.channel;
+	if (!voiceChannel) {
+		return message.reply(
+			new Message()
+				.setMain("Tu dois être connecté à un salon vocal !")
+				.end()
+		);
+	};
+
+	let permissions = voiceChannel.permissionsFor(message.client.user);
+	if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+		return message.reply(
+			new Message()
+				.setMain(`Je n'ai pas la permission de me connecter aux salons vocaux ${emotes.fail()}`)
+				.end()
+		);
+	};
+
+	let play = (message, connection) => {
+
+		connection
+			.play(__dirname + "/music.mp3", { volume: 0.8 })
+			.on("finish", () => connection.leave())
+			.on("error", error => {
+				console.error(error);
+				return connection();
+			});
+
+		message.reply(
+			new Message()
+				.setMain(`Lecture... ${emotes.success()}`)
+				.end()
+		);
+
+	};
+
+	try {
+		let connection = await voiceChannel.join();
+		play(message, connection);
+	} catch (err) {
+		console.log(err);
+		return message.reply(new Message().setMain(err || "Erreur").end());
+	};
+
+});
+
+commands.addCommand("stop", "Stopper la lecture de la musique.", async (requirements) => {
+
+	let { message } = requirements;
+
+	if (!message.member.voice.channel) {
+		return message.reply(
+			new Message()
+				.setMain("Tu dois être connecté à un salon vocal !")
+				.end()
+		);
+	};
+
+	message.member.voice.channel.leave();
+});
+
 // entertainement commands
 
 commands.addCategoryName("Commandes de divertissement");
