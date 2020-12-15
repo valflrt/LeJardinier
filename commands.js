@@ -437,8 +437,7 @@ commands.addCommand("ajouter", "Ajouter une musique à la liste.", async (requir
 
 	message.reply(
 		new Message()
-			.setMain(`Musique ajoutée à la liste ${emotes.success()}`)
-			.setDescription(`Prochaines musiques:\n##${queue.content.map(song => `- ${song.name}`).join("\n")}##`)
+			.setMain(`\`${queue.current().name}\` ajoutée à la liste ${emotes.success()}`)
 			.end()
 	);
 
