@@ -319,11 +319,11 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 		ctx.closePath();
 		ctx.clip();
 
-		const avatar = await Canvas.loadImage(message.author.displayAvatarURL({ format: 'jpg' }));
+		const avatar = await Canvas.loadImage(message.author.displayAvatarURL({ format: "jpg" }));
 
 		ctx.drawImage(avatar, 10, 75); // just x and y to do not stretch the image
 
-		const attachment = new discord.MessageAttachment(canvas.toBuffer(), 'unknown.png');
+		const attachment = new discord.MessageAttachment(canvas.toBuffer(), "profil.png");
 
 		message.reply(
 			new Message()
@@ -457,7 +457,7 @@ commands.addCommand("liste", "Montrer la liste des musiques.", async (requiremen
 	message.reply(
 		new Message()
 			.setMain(`Voici les prochaines musiques ${emotes.success()}`)
-			.setDescription(`##${queue.content.map(song => `- ${song.info.title}`).join("\n")}##`)
+			.setDescription(`##${queue.content.map(song => `- ${song.info.title}`).join("\n")}\n      channel: ${song.info}##`)
 			.end()
 	);
 
@@ -593,34 +593,6 @@ commands.addCommand("vraioufaux", "Vrai ou faux <argument>.", (requirements) => 
 		new Message()
 			.setMain(`${message.author}: ${args.join(" ") || "rien"}\n ** ${bot.user.username} **: ${RandomItem(["vrai", "faux"])} !`)
 			.end()
-	);
-
-});
-
-// action commands
-
-commands.addCategoryName("Commandes d'action");
-
-// makes you staring at somebody
-
-commands.addCommand("regarder", "Regarder <argument>.", (requirements) => {
-
-	let { message } = requirements;
-
-	let url = RandomItem(["https://tenor.com/view/pissed-stare-gif-12898273", "https://tenor.com/view/seriously-side-eye-confused-gif-8776030"]);
-	let image;
-
-	request(url, { encoding: null }, (err, res) => {
-		image = res;
-	});
-
-	let attachment = new discord.MessageAttachment(image);
-
-	message.reply(
-		new Message()
-			.setMain(`${message.author} regarde **${message.mentions.users.first()}** !`)
-			.end()
-		, attachment
 	);
 
 });
