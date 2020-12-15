@@ -318,7 +318,7 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 
 		const avatar = await Canvas.loadImage(message.author.displayAvatarURL({ format: 'jpg' }));
 
-		ctx.drawImage(avatar, 10, 75, 110, 175);
+		ctx.drawImage(avatar, 10, 75); // just x and y to do not stretch the image
 
 		const attachment = new discord.MessageAttachment(canvas.toBuffer(), 'unknown.png');
 
