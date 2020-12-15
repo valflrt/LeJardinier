@@ -2,6 +2,7 @@ const Canvas = require("canvas");
 const fetch = require("node-fetch");
 const discord = require("discord.js");
 const ytdl = require("ytdl-core");
+const request = require("request");
 
 const { Random, RandomItem, FormatDateFromMs } = require("./utils/toolbox");
 const { Collection } = require("./utils/collection");
@@ -409,11 +410,15 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 
 commands.addCategoryName("Musique");
 
+// create a new queue
+
 const queue = new Queue();
 
 commands.addCommand("ajouter", "Ajouter une musique à la liste.", async (requirements) => {
 
 	let { message, args } = requirements;
+
+	// check if an argument is given
 
 	if (!args[0]) {
 		return message.reply(
@@ -422,22 +427,22 @@ commands.addCommand("ajouter", "Ajouter une musique à la liste.", async (requir
 				.setDescription("\`https://www.youtube.com/watch?v=cette partie là\`")
 				.end()
 		);
-	} else if (args[0].match(/(.{11})/) === null) {
+	} else if (args[0].match(/(.{11})/) === null) { // check if the code is a real youtube code
 		return message.reply(
 			new Message()
-				.setMain("Ce n'est pas un \"code\" youtube !")
+				.setMain("Ce n'est pas un \"code\" youtube !\nTape \`!ajouter\` seul pour plus d'info...")
 				.end()
 		);
 	};
 
-	let url = `https://www.youtube.com/watch?v=${args[0]}`;
-	let info = await ytdl.getInfo(url);
+	let url = `https://www.youtube.com/watch?v=${args[0]}`; // create the url
+	let info = await ytdl.getInfo(url); // get info about the song
 
-	queue.add({ url: url, name: info.videoDetails.title });
+	queue.add({ url: url, info: info.videoDetails }); // add the song to the queue
 
-	message.reply(
+	message.reply( // success message
 		new Message()
-			.setMain(`\`${queue.current().name}\` ajoutée à la liste ${emotes.success()}`)
+			.setMain(`\`${info.title}\` ajoutée à la liste ${emotes.success()}`)
 			.end()
 	);
 
@@ -447,10 +452,12 @@ commands.addCommand("liste", "Montrer la liste des musiques.", async (requiremen
 
 	let { message } = requirements;
 
+	// give the music list
+
 	message.reply(
 		new Message()
 			.setMain(`Voici les prochaines musiques ${emotes.success()}`)
-			.setDescription(`##${queue.content.map(song => `- ${song.name}`).join("\n")}##`)
+			.setDescription(`##${queue.content.map(song => `- ${song.info.title}`).join("\n")}##`)
 			.end()
 	);
 
@@ -459,6 +466,8 @@ commands.addCommand("liste", "Montrer la liste des musiques.", async (requiremen
 commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (requirements) => {
 
 	let { message } = requirements;
+
+	// check if the user is in an audio channel
 
 	let voiceChannel = message.member.voice.channel;
 	if (!voiceChannel) {
@@ -469,6 +478,8 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 		);
 	};
 
+	// check if the bot has the permission to connect to the voice channel
+
 	let permissions = voiceChannel.permissionsFor(message.client.user);
 	if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
 		return message.reply(
@@ -478,6 +489,8 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 		);
 	};
 
+	// check if the queue is empty
+
 	if (queue.content.length === 0) {
 		return message.reply(
 			new Message()
@@ -486,18 +499,33 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 		);
 	};
 
+	// function to play the current song in the queue
+
 	let play = (message, connection) => {
+
+		// if the list is empty: return
+
+		if (queue.content.length === 0) {
+			voiceChannel.leave();
+			return message.reply(
+				new Message()
+					.setMain(`Liste de lecture vide ${emotes.success()}`)
+					.end()
+			);
+		};
+
+		// get the song in the queue and play it in the voice channel
 
 		connection.play(ytdl(queue.current().url, { filter: "audioonly" }), { volume: 0.8 })
 			.on("start", () => {
 				message.reply(
 					new Message()
-						.setMain(`Lecture de \`${queue.current().name}\` ${emotes.success()}`)
+						.setMain(`Lecture de \`${queue.current().info.title}\` ${emotes.success()}`)
 						.end()
 				);
 			})
-			.on("finish", () => { queue.dequeue(); play(message, connection) })
-			.on("error", error => {
+			.on("finish", () => { queue.dequeue(); play(message, connection) }) // when the song is finished: remove it and play the next one
+			.on("error", error => { // if there is an error: console.log it and leave the audio channel
 				console.error(error);
 				return voiceChannel.leave();
 			});
@@ -505,11 +533,10 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 	};
 
 	try {
-		let connection = await voiceChannel.join();
-		play(message, connection);
+		let connection = await voiceChannel.join(); // connect to the audio channel
+		play(message, connection); // play the song
 	} catch (err) {
 		console.log(err);
-		return message.reply(new Message().setMain(err || "Erreur").end());
 	};
 
 });
@@ -517,6 +544,8 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 commands.addCommand("stop", "Stopper la lecture de la musique.", async (requirements) => {
 
 	let { message } = requirements;
+
+	// check if the user is not connected to the channel
 
 	if (!message.member.voice.channel) {
 		return message.reply(
@@ -526,7 +555,10 @@ commands.addCommand("stop", "Stopper la lecture de la musique.", async (requirem
 		);
 	};
 
+	// leave the audio channel
+
 	message.member.voice.channel.leave();
+
 });
 
 // entertainement commands
@@ -538,6 +570,8 @@ commands.addCategoryName("Commandes de divertissement");
 commands.addCommand("taux", "Taux aléatoire de <argument>.", (requirements) => {
 
 	let { message, args } = requirements;
+
+	// give a random rate of args
 
 	message.reply(
 		new Message()
@@ -552,6 +586,8 @@ commands.addCommand("taux", "Taux aléatoire de <argument>.", (requirements) => 
 commands.addCommand("vraioufaux", "Vrai ou faux <argument>.", (requirements) => {
 
 	let { message, args, bot } = requirements;
+
+	// true or false
 
 	message.reply(
 		new Message()
@@ -571,13 +607,21 @@ commands.addCommand("regarder", "Regarder <argument>.", (requirements) => {
 
 	let { message } = requirements;
 
-	let image = RandomItem(["https://tenor.com/view/pissed-stare-gif-12898273", "https://tenor.com/view/seriously-side-eye-confused-gif-8776030"]);
+	let url = RandomItem(["https://tenor.com/view/pissed-stare-gif-12898273", "https://tenor.com/view/seriously-side-eye-confused-gif-8776030"]);
+	let image;
+
+	request(url, { encoding: null }, (err, res) => {
+		image = res;
+	});
+
+	let attachment = new discord.MessageAttachment(image);
 
 	message.reply(
 		new Message()
 			.setMain(`${message.author} regarde **${message.mentions.users.first()}** !`)
 			.end()
-	).then(() => message.channel.send(image));
+		, attachment
+	);
 
 });
 
