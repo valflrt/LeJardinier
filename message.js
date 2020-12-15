@@ -16,6 +16,6 @@ module.exports = class Message {
 	};
 
 	end() {
-		return `>>> ${this.main}${(!this.description || this.description === null) ? "" : `\n${this.description}`}`;
+		return `${this.main}${(!this.description || this.description === null) ? "" : `\n${this.description}`}`;
 	};
 };
