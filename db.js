@@ -20,7 +20,7 @@ function updateDB(serverId, userId) {
 			let servers = db.get("servers");
 
 			if (!servers.find({ id: serverId }).value()) {
-				servers.push({ id: serverId, users: [] })
+				servers.push({ id: serverId, users: [], songs: [] })
 					.write();
 			};
 
@@ -102,6 +102,43 @@ function getStats(serverId, userId) {
 
 };
 
+// song enqueue
+
+function addSong(serverId, song) {
+
+	// add a song to the queue
+
+	db.get("servers")
+		.find({ id: serverId })
+		.get("songs")
+		.push(song)
+		.write();
+
+};
+
+function getSongs(serverId) {
+
+	// get first song
+
+	return db.get("servers")
+		.find({ id: serverId })
+		.get("songs")
+		.value();
+
+};
+
+function shiftSong(serverId) {
+
+	// remove first song
+
+	db.get("servers")
+		.find({ id: serverId })
+		.get("songs")
+		.update(songs => songs.shift())
+		.value();
+
+}
+
 // export functions
 
-module.exports = { db, updateDB, updateXP, getStats };
+module.exports = { db, updateDB, updateXP, getStats, addSong, getSongs, shiftSong };

@@ -2,12 +2,10 @@ const Canvas = require("canvas");
 const fetch = require("node-fetch");
 const discord = require("discord.js");
 const ytdl = require("ytdl-core");
-const request = require("request");
 
 const { Random, RandomItem, FormatDateFromMs } = require("./utils/toolbox");
 const { Collection } = require("./utils/collection");
-const { getStats } = require("./db");
-const { Queue } = require("./queue");
+const { getStats, addSong, getSongs, shiftSong } = require("./db");
 const settings = require("./config.json");
 const Message = require("./message");
 const emotes = require("./emotes");
@@ -410,10 +408,6 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 
 commands.addCategoryName("Musique");
 
-// create a new queue
-
-const queue = new Queue();
-
 commands.addCommand("ajouter", "Ajouter une musique à la liste.", async (requirements) => {
 
 	let { message, args } = requirements;
@@ -436,9 +430,13 @@ commands.addCommand("ajouter", "Ajouter une musique à la liste.", async (requir
 	};
 
 	let url = `https://www.youtube.com/watch?v=${args[0]}`; // create the url
-	let info = await ytdl.getInfo(url); // get info about the song
+	let info = await ytdl.getInfo(url).videoDetails; // get info about the song
 
-	queue.add({ url: url, info: info.videoDetails }); // add the song to the queue
+	try {
+		addSong({ url: url, info: info }); // add the song to the queue (in the database)
+	} catch (err) {
+		console.log(err);
+	};
 
 	message.reply( // success message
 		new Message()
@@ -452,20 +450,32 @@ commands.addCommand("liste", "Montrer la liste des musiques.", async (requiremen
 
 	let { message } = requirements;
 
+	let songs = getSongs()
+
 	// give the music list
 
-	message.reply(
-		new Message()
-			.setMain(`Voici les prochaines musiques ${emotes.success()}`)
-			.setDescription(`##${queue.content.map(song => `- ${song.info.title}`).join("\n")}\n      channel: ${song.info}##`)
-			.end()
-	);
+	if (songs.length !== 0) {
+		message.reply(
+			new Message()
+				.setMain(`Voici les prochaines musiques ${emotes.success()}`)
+				.setDescription(`##${songs.map(song => `- ${song.info.title}\n    chaine: ${song.info}`).join("\n")}##`)
+				.end()
+		);
+	} else {
+		message.reply(
+			new Message()
+				.setMain(`La liste est vide...`)
+				.end()
+		);
+	};
 
 });
 
 commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (requirements) => {
 
 	let { message } = requirements;
+
+	let songs = getSongs();
 
 	// check if the user is in an audio channel
 
@@ -491,7 +501,7 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 
 	// check if the queue is empty
 
-	if (queue.content.length === 0) {
+	if (songs.length === 0) {
 		return message.reply(
 			new Message()
 				.setMain("Il n'y a pas de musique dans la liste, ajoutes-en une avec \`!ajouter\`.")
@@ -505,7 +515,7 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 
 		// if the list is empty: return
 
-		if (queue.content.length === 0) {
+		if (songs.length === 0) {
 			voiceChannel.leave();
 			return message.reply(
 				new Message()
@@ -516,15 +526,15 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 
 		// get the song in the queue and play it in the voice channel
 
-		connection.play(ytdl(queue.current().url, { filter: "audioonly" }), { volume: 0.8 })
+		connection.play(ytdl(songs[0].url, { filter: "audioonly" }), { volume: 0.8 })
 			.on("start", () => {
 				message.reply(
 					new Message()
-						.setMain(`Lecture de \`${queue.current().info.title}\` ${emotes.success()}`)
+						.setMain(`Lecture de \`${songs[0].info.title}\` ${emotes.success()}`)
 						.end()
 				);
 			})
-			.on("finish", () => { queue.dequeue(); play(message, connection) }) // when the song is finished: remove it and play the next one
+			.on("finish", () => { shiftSong(); play(message, connection) }) // when the song is finished: remove it and play the next one
 			.on("error", error => { // if there is an error: console.log it and leave the audio channel
 				console.error(error);
 				return voiceChannel.leave();
