@@ -14,7 +14,7 @@ Install the dependencies using:
 * [bot.js](./bot.js): main file.
 * [commands.js](./commands.js): commands.
 * [utils/](./utils/)
-	* [collection.js](./utils/collection.js): make a command collection and "format" them.
+	* [collection.js](./utils/collection.js): command collection constructor.
 	* [toolbox.js](./utils/toolbox.js): some functions to do some things.
 * [db.js](./db.js): database handler (lowdb: a local json database).
 * [message.js](./message.js): message constructor (look at [commands.js](./commands.js) to get an example).
