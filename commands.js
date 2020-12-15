@@ -442,7 +442,20 @@ commands.addCommand("ajouter", "Ajouter une musique à la liste.", async (requir
 			.end()
 	);
 
-})
+});
+
+commands.addCommand("liste", "Montrer la liste des musiques.", async (requirements) => {
+
+	let { message } = requirements;
+
+	message.reply(
+		new Message()
+			.setMain(`Voici les prochaines musiques ${emotes.success()}`)
+			.setDescription(`##${queue.content.map(song => `- ${song.name}`).join("\n")}##`)
+			.end()
+	);
+
+});
 
 commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (requirements) => {
 
