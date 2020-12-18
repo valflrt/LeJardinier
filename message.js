@@ -1,18 +1,20 @@
 module.exports = class Message {
-	setMain(str = "") {
-		str.replace(/^[.]/, str[0].toUpperCase()); /* turns the first letter to a capital */
-		this.main = str;
+	setMain(str) {
+		this.main = this.parse(str);
 		return this;
 	};
 
-	setDescription(description) {
-		if (description !== null || description) {
-			this.description = description.replace(/##/g, () => "\`\`\`");
-		} else {
-			this.description = null;
-		};
-
+	setDescription(str) {
+		str = this.parse(str);
+		this.description = str;
 		return this;
+	};
+
+	parse(str) {
+		if (!str || str === null || str === "") return null;
+		str = str.replace(/%%/g, () => "\`\`\`");
+		str = str.replace(/##/g, () => "\`");
+		return str;
 	};
 
 	end() {

@@ -13,7 +13,7 @@ require("colors");
 const commands = require("./commands");
 const config = require("./config.json");
 const { token } = require("./token.json");
-const { db, updateDB } = require("./db");
+const { updateDB } = require("./db");
 const troll = require("./troll");
 
 const bot = new Client();
@@ -41,7 +41,6 @@ bot.on("ready", () => {
 
 		console.log(` ${"[+]".green} Logged in as: ${(bot.user.tag).cyan} - (${(bot.user.id).cyan})`);
 		console.log("\n " + " connected ".bgGreen.black + "\n");
-
 	})();
 
 });

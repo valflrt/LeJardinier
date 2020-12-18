@@ -27,7 +27,7 @@ commands.addCommand("help", "Donne la liste des commandes disponibles.", (requir
 	message.reply(
 		new Message()
 			.setMain(`Voici une liste des commandes disponibles ${RandomItem([":grin:", ":partying_face:", ":thumbsup:"])}`)
-			.setDescription(`##${commands.toList()}##`)
+			.setDescription(`%%${commands.toList()}%%`)
 			.end()
 	);
 
@@ -246,7 +246,28 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 		const canvas = Canvas.createCanvas(700, 250);
 		const ctx = canvas.getContext('2d');
 
-		let basex = 140;
+		// frame
+
+		ctx.beginPath();
+		ctx.fillStyle = "rgba(20, 20, 20, 0.2)";
+		ctx.lineTo(20, 0);
+		ctx.lineTo(680, 0);
+		ctx.arc(690, 10, 10, 0, Math.PI * 2, false);
+		ctx.lineTo(700, 20);
+		ctx.lineTo(700, 230);
+		ctx.arc(690, 240, 10, 0, Math.PI * 2, true);
+		ctx.lineTo(680, 250);
+		ctx.lineTo(20, 250);
+		ctx.arc(10, 240, 10, 0, Math.PI * 2, true);
+		ctx.lineTo(0, 230);
+		ctx.lineTo(0, 20);
+		ctx.arc(10, 10, 10, 0, Math.PI * 2, true);
+		ctx.fill();
+		ctx.closePath();
+
+		// main x coordinate for text
+
+		let basex = 210;
 
 		// display username
 
@@ -313,13 +334,13 @@ commands.addCommand("profil", "Afficher votre profil.", (requirements) => {
 		// crop around avatar image
 
 		ctx.beginPath();
-		ctx.arc(60, 125, 50, 0, Math.PI * 2, true);
+		ctx.arc(120, 125, 50, 0, Math.PI * 2, true);
 		ctx.closePath();
 		ctx.clip();
 
 		const avatar = await Canvas.loadImage(message.author.displayAvatarURL({ format: "jpg" }));
 
-		ctx.drawImage(avatar, 10, 75); // just x and y to do not stretch the image
+		ctx.drawImage(avatar, 60, 75); // just x and y to do not stretch the image
 
 		const attachment = new discord.MessageAttachment(canvas.toBuffer(), "profil.png");
 
@@ -343,7 +364,7 @@ commands.addCommand("serveur", "Obtenir des informations sur ce serveur.", (requ
 	message.reply(
 		new Message()
 			.setMain(`Voici le profil de **${message.guild}** ${emotes.success()}`)
-			.setDescription(`##Nom du serveur: ${message.guild.name}\nNuméro d'identification: ${message.guild.id}\nNombre de membres: ${message.guild.memberCount}\nCréé le: ${FormatDateFromMs(message.guild.createdTimestamp)}##`)
+			.setDescription(`%%Nom du serveur: ${message.guild.name}\nNuméro d'identification: ${message.guild.id}\nNombre de membres: ${message.guild.memberCount}\nCréé le: ${FormatDateFromMs(message.guild.createdTimestamp)}%%`)
 			.end()
 	);
 
@@ -390,7 +411,7 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 			message.reply(
 				new Message()
 					.setMain(`Voici la météo dans la ville de **${response.name}** ${emotes.success()}`)
-					.setDescription(`##Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${~~response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\nVitesse du vent: ${response.wind.speed}Km/h\nSens du vent: ${response.wind.deg}°##`)
+					.setDescription(`%%Description: ${response.weather[0].description}\nTempérature: ${response.main.temp}°C\nTempérature ressentie: ${~~response.main.feels_like}°C\nHumidité: ${response.main.humidity}%\nVitesse du vent: ${response.wind.speed}Km/h\nSens du vent: ${response.wind.deg}°%%`)
 					.end()
 			);
 		})
@@ -408,60 +429,69 @@ commands.addCommand("meteo", "Le bot donne la météo pour la ville de <argument
 
 commands.addCategoryName("Musique");
 
+let dispacher;
+let isPlaying = false;
+
 commands.addCommand("ajouter", "Ajouter une musique à la liste.", async (requirements) => {
 
 	let { message, args } = requirements;
 
-	// check if an argument is given
+	let url = args[0];
 
-	if (!args[0]) {
+	// check if the url is given
+
+	if (!url) {
 		return message.reply(
 			new Message()
 				.setMain("Cette commande utilise les \"codes\" youtube, exemple:")
-				.setDescription("\`https://www.youtube.com/watch?v=cette partie là\`")
+				.setDescription("##https://www.youtube.com/watch?v=cette partie là##")
 				.end()
 		);
-	} else if (args[0].match(/(.{11})/) === null) { // check if the code is a real youtube code
+	} else if (ytdl.validateURL(url) !== true) { // check if the code is a real youtube code
 		return message.reply(
 			new Message()
-				.setMain("Ce n'est pas un \"code\" youtube !\nTape \`!ajouter\` seul pour plus d'info...")
+				.setMain("Ce lien ne convient pas !")
 				.end()
 		);
 	};
 
-	let url = `https://www.youtube.com/watch?v=${args[0]}`; // create the url
-	let info = await ytdl.getInfo(url); // get info about the song
-	info = info.videoDetails
+	let info = (await ytdl.getBasicInfo(url)).videoDetails; // get info about the song
 
 	console.log(info);
 
 	try {
-		addSong(message.guild.id, { url: url, info: info }); // add the song to the queue (in the database)
+		addSong(message.guild.id, info); // add the song to the queue (in the database)
 	} catch (err) {
 		console.log(err);
 	};
 
 	message.reply( // success message
 		new Message()
-			.setMain(`\`${info.title}\` ajoutée à la liste ${emotes.success()}`)
+			.setMain(`##${info.title}## ajoutée à la liste ${emotes.success()}`)
 			.end()
 	);
 
 });
 
-commands.addCommand("liste", "Montrer la liste des musiques.", async (requirements) => {
+commands.addCommand("playlist", "Montrer la liste des musiques.", async (requirements) => {
 
 	let { message } = requirements;
 
-	let songs = getSongs(message.guild.id)
+	let songs = getSongs(message.guild.id);
 
 	// give the music list
 
-	if (songs.length !== 0) {
+	if (songs.title) {
 		message.reply(
 			new Message()
-				.setMain(`Voici les prochaines musiques ${emotes.success()}`)
-				.setDescription(`##${songs.map(song => `- ${song.info.title}\n    Nom de la chaine: ${song.info.ownerChannelName}`).join("\n")}##`)
+				.setMain(`La musique à lire est ##${songs.title}## (nom de la chaine: ##${songs.ownerChannelName}##) ${emotes.success()}`)
+				.end()
+		);
+	} else if (songs.length > 1) {
+		message.reply(
+			new Message()
+				.setMain(`Voici la liste des prochaines musiques à lire ${emotes.success()}`)
+				.setDescription(`%%${songs.map(song => `- ${song.title}\n    Nom de la chaine: ${song.ownerChannelName}`).join("\n")}%%`)
 				.end()
 		);
 	} else {
@@ -474,11 +504,11 @@ commands.addCommand("liste", "Montrer la liste des musiques.", async (requiremen
 
 });
 
-commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (requirements) => {
+commands.addCommand("play", "Lire la prochaine musique de la playlist, <arg> correspond au volume (nombre entre 0 et 1).", async (requirements) => {
 
-	let { message } = requirements;
+	let { message, args } = requirements;
 
-	let songs = getSongs(message.guild.id);
+	let songs = await getSongs(message.guild.id);
 
 	// check if the user is in an audio channel
 
@@ -507,10 +537,18 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 	if (songs.length === 0) {
 		return message.reply(
 			new Message()
-				.setMain("Il n'y a pas de musique dans la liste, ajoutes-en une avec \`!ajouter\`.")
+				.setMain("Il n'y a pas de musique dans la liste, ajoutes-en une avec ##!ajouter##.")
 				.end()
 		);
 	};
+
+	// check if the music is already playing
+
+	if (isPlaying === true) return message.reply(
+		new Message()
+			.setMain("La musique est déjà en cours !\nUtilise ##!resume## pour remettre la musique si elle est en pause.")
+			.end()
+	);
 
 	// function to play the current song in the queue
 
@@ -520,41 +558,75 @@ commands.addCommand("play", "Lire la musique depuis un lien youtube.", async (re
 
 		if (songs.length === 0) {
 			voiceChannel.leave();
+			isPlaying = false;
 			return message.reply(
 				new Message()
-					.setMain(`Liste de lecture vide ${emotes.success()}`)
+					.setMain(`Liste de lecture vide...`)
 					.end()
 			);
 		};
 
 		// get the song in the queue and play it in the voice channel
 
-		connection.play(ytdl(songs[0].url, { filter: "audioonly" }), { volume: 0.8 })
+		dispacher = connection.play(ytdl((songs.title) ? songs.video_url : songs[0].video_url, { filter: "audioonly" }), { volume: +args[0] || 0.8 })
 			.on("start", () => {
-				message.reply(
+				isPlaying = true;
+				return message.reply(
 					new Message()
-						.setMain(`Lecture de \`${songs[0].info.title}\` ${emotes.success()}`)
+						.setMain(`Lecture de ##${(songs.title) ? songs.title : songs[0].title}## ${emotes.success()} (volume: ${args[0] || "0.8"})`)
 						.end()
 				);
 			})
 			.on("finish", () => { shiftSong(message.guild.id); play(message, connection) }) // when the song is finished: remove it and play the next one
 			.on("error", error => { // if there is an error: console.log it and leave the audio channel
 				console.error(error);
+				isPlaying = false;
 				return voiceChannel.leave();
 			});
 
 	};
 
 	try {
-		let connection = await voiceChannel.join(); // connect to the audio channel
-		play(message, connection); // play the song
+		play(message, await voiceChannel.join()); // connect to the channel and play the song
 	} catch (err) {
 		console.log(err);
 	};
 
 });
 
-commands.addCommand("stop", "Stopper la lecture de la musique.", async (requirements) => {
+commands.addCommand("pause", "Mettre en pause la musique.", async (requirements) => {
+
+	let { message } = requirements;
+
+	// pause the music
+
+	dispacher.pause();
+
+	return message.reply(
+		new Message()
+			.setMain("La musique est en pause !")
+			.end()
+	);
+
+});
+
+commands.addCommand("resume", " musique.", async (requirements) => {
+
+	let { message } = requirements;
+
+	// resume the music
+
+	dispacher.resume();
+
+	return message.reply(
+		new Message()
+			.setMain("La musique recommence !")
+			.end()
+	);
+
+});
+
+commands.addCommand("stop", "Arreter la musique.", async (requirements) => {
 
 	let { message } = requirements;
 
@@ -568,9 +640,33 @@ commands.addCommand("stop", "Stopper la lecture de la musique.", async (requirem
 		);
 	};
 
+	// kill the audio connection
+
+	dispacher.destroy();
+
 	// leave the audio channel
 
 	message.member.voice.channel.leave();
+
+});
+
+commands.addCommand("next", "Enlever la musique de la playlist.", (requirements) => {
+
+	let { message } = requirements;
+
+	// leave the channel
+
+	message.member.voice.channel.leave();
+
+	// remove the current song
+
+	shiftSong(message.guild.id);
+
+	message.reply(
+		new Message()
+			.setMain(`La musique a été enlevée de la playlist ${emotes.success()}`)
+			.end()
+	);
 
 });
 
