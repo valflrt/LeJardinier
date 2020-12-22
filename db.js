@@ -133,8 +133,8 @@ function shiftSong(serverId) {
 
 	db.get("servers")
 		.find({ id: serverId })
-		.update("songs", songs => (!songs.title) ? songs.shift() : [])
-		.value();
+		.remove("songs[0]")
+		.write();
 
 }
 

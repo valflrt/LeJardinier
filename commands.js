@@ -481,13 +481,8 @@ commands.addCommand("playlist", "Montrer la liste des musiques.", async (require
 
 	// give the music list
 
-	if (songs.title) {
-		message.reply(
-			new Message()
-				.setMain(`La musique à lire est ##${songs.title}## (nom de la chaine: ##${songs.ownerChannelName}##) ${emotes.success()}`)
-				.end()
-		);
-	} else if (songs.length > 1) {
+
+	if (songs.length !== 0) {
 		message.reply(
 			new Message()
 				.setMain(`Voici la liste des prochaines musiques à lire ${emotes.success()}`)
@@ -568,12 +563,12 @@ commands.addCommand("play", "Lire la prochaine musique de la playlist, <arg> cor
 
 		// get the song in the queue and play it in the voice channel
 
-		dispacher = connection.play(ytdl((songs.title) ? songs.video_url : songs[0].video_url, { filter: "audioonly" }), { volume: +args[0] || 0.8 })
+		dispacher = connection.play(ytdl(songs[0].video_url, { filter: "audioonly" }), { volume: +args[0] || 0.8 })
 			.on("start", () => {
 				isPlaying = true;
 				return message.reply(
 					new Message()
-						.setMain(`Lecture de ##${(songs.title) ? songs.title : songs[0].title}## ${emotes.success()} (volume: ${args[0] || "0.8"})`)
+						.setMain(`Lecture de ##${songs[0].title}## ${emotes.success()} (volume: ${args[0] || "0.8"})`)
 						.end()
 				);
 			})
@@ -598,6 +593,12 @@ commands.addCommand("pause", "Mettre en pause la musique.", async (requirements)
 
 	let { message } = requirements;
 
+	if (!dispacher) return message.reply(
+		new Message()
+			.setMain("Il faut d'abord lancer la musique !")
+			.end()
+	);
+
 	// pause the music
 
 	dispacher.pause();
@@ -613,6 +614,12 @@ commands.addCommand("pause", "Mettre en pause la musique.", async (requirements)
 commands.addCommand("resume", " musique.", async (requirements) => {
 
 	let { message } = requirements;
+
+	if (!dispacher) return message.reply(
+		new Message()
+			.setMain("Il faut d'abord lancer la musique !")
+			.end()
+	);
 
 	// resume the music
 
